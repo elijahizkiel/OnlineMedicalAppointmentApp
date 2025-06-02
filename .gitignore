@@ -1,0 +1,6 @@
+# Ignore Maven build directory
+target/
+
+# Ignore the SQLite database file
+*.db
+*.json
