@@ -1,29 +1,36 @@
 package com.example.OnlineMedicalAppointment.model;
 
 import com.google.common.collect.ImmutableList;
-import com.google.genai.Client;
-import com.google.genai.types.Content;
-import com.google.genai.types.GenerateContentConfig;
-import com.google.genai.types.GenerateContentResponse;
-import com.google.genai.types.Part;
+// import com.google.genai.Client; // Removed unused import
+import com.google.generativeai.GenerativeModel; // Corrected import
+import com.google.generativeai.Content; // Corrected import
+import com.google.generativeai.GenerateContentConfig; // Corrected import
+import com.google.generativeai.GenerateContentResponse; // Corrected import
+import com.google.generativeai.Part; // Corrected import
+import com.google.generativeai.Tool; // Corrected import
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 /**
  * A client class to integrate Google's Gemini API into a Java application.
- * It sends text messages to Gemini, receives feedback, and uses database functions when necessary.
  */
 public class GeminiClient {
-    private final Client client;
+    private final GenerativeModel model; // Changed type to GenerativeModel
 
     /**
      * Constructor that initializes the Gemini client with an API key.
      * @param apiKey The API key obtained from Google AI Studio.
      */
     public GeminiClient(String apiKey) {
-        this.client = new Client(apiKey);
+        // Use GenerativeModel.builder and specify a model name
+        this.model = GenerativeModel.builder()
+            .setModelName("gemini-1.5-flash-latest") // Specify model name
+            .setApiKey(apiKey)
+            .build();
     }
+    
 
     /**
      * Starts a new chat session with Gemini, configured to use database functions.
@@ -32,11 +39,13 @@ public class GeminiClient {
      */
     public ChatSession startChat() throws NoSuchMethodException {
         // Register the database function for automatic function calling
-        Method getSchedules = DatabaseAccesor.class.getMethod("getSchedules", String.class);
+        Method getAppointments = DatabaseAccessor.class.getMethod("getAppointments", String.class);
+        // Wrap the Method in a Tool object
+        Tool getAppointmentsTool = Tool.fromMethod(getAppointments);
         GenerateContentConfig config = GenerateContentConfig.builder()
-            .tools(ImmutableList.of(getProductPriceMethod))
+            .tools(ImmutableList.of(getAppointmentsTool)) // Use the Tool object
             .build();
-        return new ChatSession(client, config);
+        return new ChatSession(model, config); // Pass the GenerativeModel
     }
 
     /**
@@ -44,12 +53,12 @@ public class GeminiClient {
      * and handling database-backed responses via function calling.
      */
     public static class ChatSession {
-        private final Client client;
+        private final GenerativeModel model; // Changed type to GenerativeModel
         private final GenerateContentConfig config;
         private final List<Content> history;
 
-        private ChatSession(Client client, GenerateContentConfig config) {
-            this.client = client;
+        private ChatSession(GenerativeModel model, GenerateContentConfig config) { // Changed parameter type
+            this.model = model;
             this.config = config;
             this.history = new ArrayList<>();
         }
@@ -67,7 +76,8 @@ public class GeminiClient {
 
             // Send the entire conversation history to Gemini with the function calling config
             List<Content> contents = new ArrayList<>(history);
-            GenerateContentResponse response = client.models.generateContent("gemini-2.0-flash", contents, config);
+            // Use the GenerativeModel instance to generate content
+            GenerateContentResponse response = model.generateContent(contents, config);
 
             // Extract the response text and add it to the history
             String responseText = response.text();
@@ -75,28 +85,6 @@ public class GeminiClient {
             history.add(assistantContent);
 
             return responseText;
-        }
-    }
-}
-
-/**
- * A utility class containing static methods to query the database.
- * These methods are registered with Gemini for automatic function calling.
- */
-class DatabaseFunctions {
-    /**
-     * Retrieves the price of a product from the database.
-     * @param productName The name of the product.
-     * @return A string containing the product's price or an error message if not found.
-     */
-    public static String getProductPrice(String productName) {
-        // Simulate a database query (replace with actual database logic)
-        if ("laptop".equalsIgnoreCase(productName)) {
-            return "The price of the laptop is $1000.";
-        } else if ("smartphone".equalsIgnoreCase(productName)) {
-            return "The price of the smartphone is $500.";
-        } else {
-            return "Product not found.";
         }
     }
 }
