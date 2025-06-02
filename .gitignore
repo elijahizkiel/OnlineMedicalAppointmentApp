@@ -1,6 +1,9 @@
 # Ignore Maven build directory
 target/
-
+.vscode/
+.idea/
 # Ignore the SQLite database file
 *.db
 *.json
+
+
