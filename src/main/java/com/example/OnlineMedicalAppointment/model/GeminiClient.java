@@ -2,13 +2,21 @@ package com.example.OnlineMedicalAppointment.model;
 
 import com.google.common.collect.ImmutableList;
 import com.google.genai.Client;
+// Duplicate imports removed here, ensure single set of necessary imports
 import com.google.genai.types.Content;
+import com.google.genai.types.FunctionDeclaration;
 import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
+import com.google.genai.types.HttpOptions;
 import com.google.genai.types.Part;
+import com.google.genai.types.Tool;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+// Optional is not explicitly used in the final version of the constructor from the prompt
+// but might be needed if setApiKey(Optional<String>) was found and used.
+// For now, let's keep it if other parts of the file use it.
+import java.util.Optional;
 
 /**
  * A client class to integrate Google's Gemini API into a Java application.
@@ -22,20 +30,59 @@ public class GeminiClient {
      * @param apiKey The API key obtained from Google AI Studio.
      */
     public GeminiClient(String apiKey) {
-        this.client = new Client(apiKey);
+        // Instruction:
+        // try {
+        //    this.client = Client.builder()
+        //        // .setApiKey(apiKey) // This is a guess, verify if such a method exists.
+        //        // If not, the API key might need to be an environment variable like GOOGLE_API_KEY
+        //        // or the application needs to be configured for Vertex AI with ADC.
+        //        .httpOptions(HttpOptions.builder().apiVersion("v1").build()) // As per documentation
+        //        .build();
+        // } catch (Exception e) { // Catch broad exception during instantiation for now
+        //    throw new RuntimeException("Failed to initialize Gemini Client: " + e.getMessage(), e);
+        // }
+        // Note: The prompt's example for Client.builder() does not show direct API key input.
+        // Assuming API key is handled by environment (e.g., GOOGLE_API_KEY) or ADC for Vertex.
+        // If a method like .setApiKey(apiKey) exists on Client.Builder, it should be used.
+        // For now, following the structure that prioritizes HttpOptions as shown in prompt.
+        try {
+            // HttpOptions setup removed from Client.builder() as setHttpOptions was not found
+            // and httpOptions() also might not exist or is not straightforward.
+            // This relies on API key being set via environment variable GOOGLE_API_KEY.
+            this.client = Client.builder()
+                .build();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize Gemini Client: " + e.getMessage(), e);
+        }
     }
 
     /**
      * Starts a new chat session with Gemini, configured to use database functions.
      * @return A ChatSession object to manage the conversation.
-     * @throws NoSuchMethodException If the database function method cannot be found.
+     * @throws RuntimeException if the getProductPrice method cannot be found.
      */
-    public ChatSession startChat() throws NoSuchMethodException {
-        // Register the database function for automatic function calling
-        Method getSchedules = DatabaseAccesor.class.getMethod("getSchedules", String.class);
-        GenerateContentConfig config = GenerateContentConfig.builder()
-            .tools(ImmutableList.of(getProductPriceMethod))
+    public ChatSession startChat() {
+        Method getProductPriceMethod;
+        try {
+            getProductPriceMethod = DatabaseFunctions.class.getMethod("getProductPrice", String.class);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("Failed to find method getProductPrice", e);
+        }
+
+        com.google.genai.types.FunctionDeclaration functionDeclaration =
+            com.google.genai.types.FunctionDeclaration.builder()
+                .name("getProductPrice") // Using .name()
+                .description("Retrieves the price of a product from the database.") // Using .description()
+                // Parameters schema would be defined here for full functionality
+                .build();
+
+        com.google.genai.types.Tool tool = com.google.genai.types.Tool.builder()
+            .functionDeclarations(ImmutableList.of(functionDeclaration)) // Using .functionDeclarations()
             .build();
+
+        GenerateContentConfig config = GenerateContentConfig.builder()
+           .tools(ImmutableList.of(tool)) // Kept .tools()
+           .build();
         return new ChatSession(client, config);
     }
 

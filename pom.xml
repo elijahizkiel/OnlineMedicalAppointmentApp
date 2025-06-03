@@ -27,6 +27,27 @@
             <artifactId>swingx-all</artifactId>
             <version>1.6.4</version> 
         </dependency>
+
+        <!-- JUnit 5 Dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.7.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.7.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Google GenAI Dependency -->
+        <dependency>
+          <groupId>com.google.genai</groupId>
+          <artifactId>google-genai</artifactId>
+          <version>0.7.0</version>
+        </dependency>
       
     </dependencies>
 
@@ -51,6 +72,13 @@
                 <configuration>
                     <mainClass>com.example.OnlineMedicalAppointment.Main</mainClass> <!-- Set your main class here -->
                 </configuration>
+            </plugin>
+
+            <!-- Maven Surefire Plugin for running tests -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0-M5</version> <!-- Use a recent version suitable for JUnit 5 -->
             </plugin>
         </plugins>
     </build>
