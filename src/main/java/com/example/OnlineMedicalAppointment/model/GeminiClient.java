@@ -2,13 +2,11 @@ package com.example.OnlineMedicalAppointment.model;
 
 import com.google.common.collect.ImmutableList;
 import com.google.genai.Client;
-import com.google.genai.types.Content;
 import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Tool;
 import java.lang.reflect.Method;
 import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
-import com.example.OnlineMedicalAppointment.model.User;
 
 public class GeminiClient {
     private final Client client = Client.builder()

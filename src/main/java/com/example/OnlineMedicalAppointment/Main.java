@@ -36,8 +36,8 @@ public class Main {
             SwingUtilities.invokeLater(() -> {
                 try {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                } catch (Exception e) {
-                    e.printStackTrace();
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException e) {
+                    System.err.println("Failed to set Look and Feel: " + e.getMessage());
                 }
                 LoginFrame loginFrame = new LoginFrame();
                 loginFrame.setVisible(true);
