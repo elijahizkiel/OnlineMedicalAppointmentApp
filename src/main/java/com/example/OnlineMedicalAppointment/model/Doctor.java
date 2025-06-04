@@ -194,6 +194,7 @@ public class Doctor extends DatabaseAccessor implements User {
      * 
      * @return true if update was successful, false otherwise
      */
+    @Override
     public boolean updateUser() {
         return super.updateUser(this);
     }
@@ -203,6 +204,7 @@ public class Doctor extends DatabaseAccessor implements User {
      * 
      * @return true if deletion was successful, false otherwise
      */
+    @Override
     public boolean deleteUser() {        
         return super.deleteUser(this.doctorsID);
     }

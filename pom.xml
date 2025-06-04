@@ -54,34 +54,40 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Google Cloud Vertex AI SDK (version managed by BOM) -->
+        <!-- Google GenAI sdk dependencies -->
         <dependency>
-            <groupId>com.google.cloud</groupId>
-            <artifactId>google-cloud-vertexai</artifactId>
-        </dependency>
-        
-        <!-- Google Guava (version also likely managed by Google BOM) -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <!-- Version 32.1.3-jre was here, BOM might override -->
+            <groupId>com.google.genai</groupId>
+            <artifactId>google-genai</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
         <!-- Mockito Dependencies for testing -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>3.12.4</version>
+            <version>5.10.0</version> <!-- Updated version -->
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>3.12.4</version>
+            <version>5.10.0</version> <!-- Updated version -->
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.swinglabs.swingx</groupId>
+            <artifactId>swingx-all</artifactId>
+            <version>1.6.4</version> <!-- Use a suitable version -->
+        </dependency>
     </dependencies>
-
+    <repositories>
+        <repository>
+            <id>google-apis</id>
+            <name>Google APIs</name>
+            <!-- Replace with the actual repository URL from documentation -->
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+    </repositories>
     <build>
         <plugins>
             <!-- Maven Compiler Plugin -->
@@ -110,6 +116,16 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M5</version> <!-- Use a recent version suitable for JUnit 5 -->
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.0</version>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
+                </configuration>
             </plugin>
         </plugins>
     </build>

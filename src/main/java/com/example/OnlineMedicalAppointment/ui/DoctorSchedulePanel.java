@@ -47,7 +47,29 @@ public class DoctorSchedulePanel extends JPanel {
         // Add the scroll pane to the center of the panel
         add(scrollPane, BorderLayout.CENTER);
 
-        // TODO: Implement logic to load and save schedule data
-        // TODO: Add components for adding/editing appointments within the schedule
+            // Add buttons for loading and saving
+            JPanel buttonPanel = new JPanel();
+            javax.swing.JButton loadButton = new javax.swing.JButton("Load Schedule");
+            javax.swing.JButton saveButton = new javax.swing.JButton("Save Schedule");
+
+            buttonPanel.add(loadButton);
+            buttonPanel.add(saveButton);
+
+            add(buttonPanel, BorderLayout.SOUTH);
+
+            // Add action listeners (placeholder logic)
+            loadButton.addActionListener(e -> {
+                // TODO: Implement logic to load schedule data from a source (e.g., file, database)
+                System.out.println("Load button clicked");
+                // Example: Call a method to load data into the model
+                // loadScheduleData(model);
+            });
+
+            saveButton.addActionListener(e -> {
+                // TODO: Implement logic to save schedule data to a source (e.g., file, database)
+                System.out.println("Save button clicked");
+                // Example: Call a method to save data from the model
+                // saveScheduleData(model);
+            });
     }
 }

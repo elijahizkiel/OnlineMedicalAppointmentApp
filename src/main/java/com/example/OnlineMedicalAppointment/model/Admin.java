@@ -208,6 +208,7 @@ public class Admin extends DatabaseAccessor implements User {
      * Updates this admin's information in the database.
      * @return true if update was successful, false otherwise
      */
+    @Override
     public boolean updateUser() {
         return super.updateUser(this);
     }
@@ -216,6 +217,7 @@ public class Admin extends DatabaseAccessor implements User {
      * Deletes this admin from the database.
      * @return true if deletion was successful, false otherwise
      */
+    @Override
     public boolean deleteUser() {        
         return super.deleteUser(this.adminID);
     }

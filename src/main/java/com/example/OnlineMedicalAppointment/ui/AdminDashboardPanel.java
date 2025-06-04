@@ -12,7 +12,7 @@ import com.example.OnlineMedicalAppointment.model.User;
  */
 public class AdminDashboardPanel extends JPanel {
 
-    private User currentUser;
+    private final User currentUser;
 
     /**
      * Constructs the AdminDashboardPanel for the given user.

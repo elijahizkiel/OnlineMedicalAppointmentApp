@@ -264,11 +264,11 @@ public abstract class DatabaseAccessor {
      * @param username the username
      * @return the User object, or null if not found
      */
-    public static User getByUsername(int username) {
+    public static User getByUsername(String username) {
         String query = "SELECT * FROM users_table WHERE username = ?";
         try (Connection conn = DatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setInt(1, username);
+            pstmt.setString(1, username);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 String userType = rs.getString("userType");
