@@ -10,7 +10,7 @@ public class Message {
     private final Integer id;
     private final Integer senderId;
     private final Integer receiverId;
-    private final Integer roomId;
+    private final String roomId;
     private String senderName;
     private String receiverName;
     private String message;
@@ -29,7 +29,7 @@ public class Message {
     public Message(Integer id, 
             Integer senderId, 
             Integer receiverId, 
-            Integer roomId,
+            String roomId,
             String senderName, 
             String receiverName, 
             String message) {
@@ -53,7 +53,7 @@ public class Message {
      * @param timestamp the timestamp
      */
     public Message(Integer id, 
-        Integer roomId,
+        String roomId,
         Integer senderId, 
         Integer receiverId, 
         String message,
@@ -74,7 +74,7 @@ public class Message {
      * @param receiverName the receiver's name
      * @param message the message content
      */
-    public Message(Integer id, Integer roomId, String senderName, String receiverName, String message) {
+    public Message(Integer id, String roomId, String senderName, String receiverName, String message) {
             this.id = id;
             this.roomId = roomId;
             this.senderId = null; // senderId is missing
@@ -105,7 +105,7 @@ public class Message {
      * Gets the room ID.
      * @return the room ID
      */
-    public Integer getRoomID(){
+    public String getRoomID(){
         return roomId;
     }
 
@@ -185,7 +185,7 @@ public class Message {
      * Gets the room ID.
      * @return the room ID
      */
-    public Integer getRoomId(){
+    public String getRoomId(){
         return roomId;
     }
 

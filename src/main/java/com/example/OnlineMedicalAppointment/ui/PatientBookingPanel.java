@@ -15,7 +15,6 @@ import org.jdesktop.swingx.decorator.ColorHighlighter;
 import org.jdesktop.swingx.decorator.HighlightPredicate;
 import java.awt.Color;
 import javax.swing.JTextField;
-import org.jdesktop.swingx.calendar.MonthView;
 import javax.swing.JButton;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ListCellRenderer;

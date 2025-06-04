@@ -1,5 +1,6 @@
 package com.example.OnlineMedicalAppointment.model;
 
+import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 import java.time.Instant;
 import java.time.LocalDateTime;
 
@@ -102,6 +103,11 @@ public class Appointment {
          */
         public void setDoctorID(int doctorID) {
             this.doctorID = doctorID;
+        }
+
+        public String getDoctorName() {
+            User doctor = DatabaseAccessor.getUserByID(doctorID);
+            return doctor.getFName() + " " + doctor.getLName();
         }
 
         /**

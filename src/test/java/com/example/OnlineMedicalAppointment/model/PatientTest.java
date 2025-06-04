@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class PatientTest {
     @Test
     void testPatientFields() {
-        Patient p = new Patient("John", "Doe", "johndoe", "1234567890");
+        Patient p = new Patient("John", "Doe", "johndoe","pass", "1234567890");
         assertEquals("John", p.getFName());
         assertEquals("Doe", p.getLName());
         assertEquals("johndoe", p.getUsername());
