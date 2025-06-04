@@ -18,9 +18,9 @@ import java.util.List;
 // For now, let's keep it if other parts of the file use it.
 import java.util.Optional;
 
+import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 /**
  * A client class to integrate Google's Gemini API into a Java application.
- * It sends text messages to Gemini, receives feedback, and uses database functions when necessary.
  */
 public class GeminiClient {
     private final Client genAiClient; // Renamed from client
@@ -92,6 +92,7 @@ public class GeminiClient {
         this.genAiClient = null; // Not used by ChatSession if modelAdapter is provided
         this.modelAdapter = testAdapter;
     }
+    
 
     /**
      * Starts a new chat session with Gemini, configured to use database functions.
