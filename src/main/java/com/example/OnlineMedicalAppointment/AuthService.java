@@ -11,8 +11,18 @@ import com.example.OnlineMedicalAppointment.model.Doctor;
 import com.example.OnlineMedicalAppointment.model.Patient;
 import com.example.OnlineMedicalAppointment.model.Admin;
 import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
+
+/**
+ * Provides authentication and signup services for users.
+ */
 public class AuthService {
 
+    /**
+     * Authenticates a user with the given username and password.
+     * @param username the username
+     * @param password the password
+     * @return the authenticated User object, or null if authentication fails
+     */
     public static User login(String username, String password) {
         String sql = "SELECT * FROM users_table WHERE username = ? AND password = ?";
         try (Connection conn = DatabaseConnector.getConnection();
@@ -59,6 +69,17 @@ public class AuthService {
         return null;
     }
 
+    /**
+     * Registers a new user in the system.
+     * @param firstName the first name
+     * @param lastName the last name
+     * @param username the username
+     * @param password the password
+     * @param userType the user type
+     * @param specialty the specialty (for doctors)
+     * @param phoneNumber the phone number
+     * @return true if signup was successful, false otherwise
+     */
     public static boolean signup(String firstName, String lastName, String username, String password, String userType, String specialty, String phoneNumber) {
         User user;
         if(userType.equals("Doctor")){

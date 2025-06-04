@@ -4,8 +4,15 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Utility class for initializing the database schema.
+ */
 public class DatabaseInitializer {
 
+    /**
+     * Initializes the database tables if they do not exist.
+     * @param connection the database connection
+     */
     public static void initializeDatabase(Connection connection) {
         try {
             Statement statement = connection.createStatement();

@@ -13,9 +13,16 @@ import com.example.OnlineMedicalAppointment.model.Patient;
 import com.example.OnlineMedicalAppointment.model.User;
 import com.example.OnlineMedicalAppointment.model.Doctor;
 
-// DatabaseAccessor.java
+/**
+ * Abstract class providing static methods for database access and manipulation.
+ */
 public abstract class DatabaseAccessor {
-    
+
+    /**
+     * Retrieves a list of doctors by specialty.
+     * @param specialty the specialty to filter by
+     * @return list of doctors with the given specialty
+     */
     public static List<Doctor> getDoctorsBySpecialty(String specialty){
         String sql = "SELECT * FROM users_table WHERE userType = 'Doctor' AND specialty = ?";
         
@@ -42,6 +49,10 @@ public abstract class DatabaseAccessor {
         }
         return doctors;
     }
+    /**
+     * Retrieves a list of all doctors.
+     * @return list of all doctors
+     */
     public static List<Doctor> getDoctors(){
         String sql = "SELECT * FROM users_table WHERE userType = 'Doctor' ";
         
@@ -72,6 +83,11 @@ public abstract class DatabaseAccessor {
         return doctors;
     }
 
+    /**
+     * Retrieves all messages for a given chat room.
+     * @param roomId the chat room ID
+     * @return list of messages in the chat room
+     */
     public static List<Message> getMessages(String roomId){
         String sql = "SELECT * FROM messages WHERE roomID = ?";
         List<Message> messages = new ArrayList<>();
@@ -109,6 +125,11 @@ public abstract class DatabaseAccessor {
         return messages;
     };
     
+    /**
+     * Retrieves all appointments for a user (doctor or patient).
+     * @param userId the user ID
+     * @return list of appointments
+     */
     public static List<Appointment> getAppointments(int userId){
         String sql = "SELECT * FROM appointments WHERE doctorID = ? OR patientID = ?";
 
@@ -134,6 +155,11 @@ public abstract class DatabaseAccessor {
 
     };
 
+    /**
+     * Retrieves all chat room IDs for a user.
+     * @param userId the user ID
+     * @return list of chat room IDs
+     */
     public static List<String> getChatRoomID(int userId) {
         String sql = "SELECT roomID FROM messages WHERE senderID = ? OR receiverID = ? GROUP BY roomID";
         List<String> roomIds = new ArrayList<>();
@@ -153,6 +179,11 @@ public abstract class DatabaseAccessor {
         return roomIds;
     }
     // Additional methods for adding, updating, and deleting records
+    /**
+     * Adds a user to the database.
+     * @param user the user to add
+     * @return true if successful, false otherwise
+     */
     public static boolean addUser(User user){
         String sql = "INSERT INTO users (FName, LName, username, password, userType, specialty, phoneNumber) VALUES ( ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.getConnection();
@@ -173,7 +204,12 @@ public abstract class DatabaseAccessor {
         }
     }
     
-    public void updateUser(User user){
+    /**
+     * Updates a user in the database.
+     * @param user the user to update
+     * @return true if successful, false otherwise
+     */
+    public boolean updateUser(User user){
         String sql = "UPDATE users_table SET FName = ?, LName = ?, username = ?, password = ?, userType = ?, specialty = ?, phoneNumber = ? WHERE userID = ?";
         try (Connection conn = DatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -188,15 +224,23 @@ public abstract class DatabaseAccessor {
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows > 0) {
                 System.out.println("User updated successfully: " + user.getUsername());
+                return true;
             } else {
                 System.out.println("User not found for update: " + user.getUsername());
+                return false;
             }
+
         } catch (SQLException e) {
             System.err.println("Error updating user: " + e.getMessage());
+            return false;
         }
     }
 
-    public void deleteUser(int userID) {
+    /**
+     * Deletes a user from the database.
+     * @param userID the user ID to delete
+     */
+    public boolean deleteUser(int userID) {
         String sql = "DELETE FROM users_table WHERE userID = ?";
         try (Connection conn = DatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -204,14 +248,22 @@ public abstract class DatabaseAccessor {
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows > 0) {
             System.out.println("User deleted successfully with ID: " + userID);
-            } else {
-            System.out.println("User not found for deletion with ID: " + userID);
-            }
+            return true;
+        } else {
+            System.out.println("User not found for deletion with ID: " + userID);   
+            return false;
+        }
         } catch (SQLException e) {
             System.err.println("Error deleting user: " + e.getMessage());
+            return false;
         }
     }
     
+    /**
+     * Retrieves a user by username.
+     * @param username the username
+     * @return the User object, or null if not found
+     */
     public static User getByUsername(int username) {
         String query = "SELECT * FROM users_table WHERE username = ?";
         try (Connection conn = DatabaseConnector.getConnection();
@@ -247,6 +299,11 @@ public abstract class DatabaseAccessor {
         
         return null;
     }
+    /**
+     * Retrieves a user by user ID.
+     * @param userId the user ID
+     * @return the User object, or null if not found
+     */
     public static User getUserByID(int userId) {
         String query = "SELECT * FROM users_table WHERE userID = ?";
         try (Connection conn = DatabaseConnector.getConnection();
@@ -282,6 +339,11 @@ public abstract class DatabaseAccessor {
         return null;
     }
 
+    /**
+     * Adds a message to the database.
+     * @param message the message to add
+     * @return true if successful, false otherwise
+     */
     public boolean  addMessage(Message message){
         String sql = "INSERT INTO Messages (roomID, senderId, receiverId, messageText, timestamp) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.getConnection();
@@ -299,6 +361,11 @@ public abstract class DatabaseAccessor {
             return false;
         }
     }
+
+    /**
+     * Updates a message in the database.
+     * @param message the message to update
+     */
     public void updateMessage(Message message){
         String sql = "UPDATE Messages SET roomID = ?, senderId = ?, receiverId = ?, messageText = ?, timestamp = ? WHERE messageID = ?";
         try (Connection conn = DatabaseConnector.getConnection();

@@ -7,10 +7,17 @@ import javax.swing.JPanel;
 
 import com.example.OnlineMedicalAppointment.model.User;
 
+/**
+ * Panel for displaying and managing a doctor's schedule.
+ */
 public class DoctorSchedulePanel extends JPanel {
 
     private User currentUser;
 
+    /**
+     * Constructs the DoctorSchedulePanel for the given user.
+     * @param user the current user
+     */
     public DoctorSchedulePanel(User user) {
         this.currentUser = user;
         setLayout(new BorderLayout());

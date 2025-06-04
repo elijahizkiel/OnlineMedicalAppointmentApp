@@ -16,26 +16,29 @@ import java.util.List;
 // Optional is not explicitly used in the final version of the constructor from the prompt
 // but might be needed if setApiKey(Optional<String>) was found and used.
 // For now, let's keep it if other parts of the file use it.
-import java.util.Optional;
+import java.util.Optional; 
 
-import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 /**
  * A client class to integrate Google's Gemini API into a Java application.
+ * It sends text messages to Gemini, receives feedback, and uses database functions when necessary.
  */
 public class GeminiClient {
     private final Client genAiClient; // Renamed from client
     private final GenerativeModelAdapter modelAdapter;
 
-    // Definition of the new public interface GenerativeModelAdapter
-    // Ensure necessary imports for types used in the signature are present at the top of GeminiClient.java
-    // import com.google.genai.types.Content;
-    // import com.google.genai.types.GenerateContentConfig;
-    // import com.google.genai.types.GenerateContentResponse;
-    // import java.util.List;
+    /**
+     * Interface for adapting generative model calls.
+     */
     public interface GenerativeModelAdapter {
+        /**
+         * Generates content using the specified model.
+         * @param modelName the model name
+         * @param contents the content list
+         * @param config the generation config
+         * @return the generation response
+         * @throws Exception if generation fails
+         */
         GenerateContentResponse generateContent(String modelName, List<Content> contents, GenerateContentConfig config) throws Exception;
-        // Consider if other overloads of generateContent (e.g., without config, or with single Content) are used or needed.
-        // For now, this matches the one used in ChatSession.sendMessage.
     }
 
     // This class goes inside GeminiClient.java
@@ -87,12 +90,14 @@ public class GeminiClient {
         this.modelAdapter = new RealGenerativeModelAdapter(this.genAiClient);
     }
 
-    // Package-private constructor for testing
+    /**
+     * Package-private constructor for testing.
+     * @param testAdapter the adapter to use for testing
+     */
     GeminiClient(GenerativeModelAdapter testAdapter) {
         this.genAiClient = null; // Not used by ChatSession if modelAdapter is provided
         this.modelAdapter = testAdapter;
     }
-    
 
     /**
      * Starts a new chat session with Gemini, configured to use database functions.
@@ -133,6 +138,11 @@ public class GeminiClient {
         private final GenerateContentConfig config;
         private final List<Content> history;
 
+        /**
+         * Constructs a ChatSession with the given adapter and config.
+         * @param modelAdapter the generative model adapter
+         * @param config the generation config
+         */
         private ChatSession(GenerativeModelAdapter modelAdapter, GenerateContentConfig config) {
             this.modelAdapter = modelAdapter;
             this.config = config;
@@ -140,6 +150,12 @@ public class GeminiClient {
         }
 
         // Add this package-private constructor for testing
+        /**
+         * Package-private constructor for testing.
+         * @param modelAdapter the generative model adapter
+         * @param config the generation config
+         * @param history the conversation history
+         */
         ChatSession(GenerativeModelAdapter modelAdapter, GenerateContentConfig config, List<Content> history) {
             this.modelAdapter = modelAdapter;
             this.config = config;
@@ -153,7 +169,7 @@ public class GeminiClient {
          * @return Gemini's response as a string.
          * @throws Exception if the modelAdapter.generateContent call fails.
          */
-        public String sendMessage(String message) throws Exception { // Added throws Exception
+        public String sendMessage(String message) throws Exception {
             // Add the user's message to the conversation history
             Content userContent = Content.fromParts(Part.fromText("user: " + message));
             history.add(userContent);
@@ -174,12 +190,18 @@ public class GeminiClient {
             return responseText;
         }
 
-        // Package-private getter for history for testing
+        /**
+         * Gets the conversation history.
+         * @return the conversation history
+         */
         List<Content> getHistory() {
             return this.history;
         }
 
-        // Package-private getter for config for testing
+        /**
+         * Gets the generation config.
+         * @return the generation config
+         */
         GenerateContentConfig getConfig() {
             return this.config;
         }

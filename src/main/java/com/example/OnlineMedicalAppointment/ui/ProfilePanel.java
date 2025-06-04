@@ -1,20 +1,17 @@
 package com.example.OnlineMedicalAppointment.ui;
 
-import com.example.OnlineMedicalAppointment.model.User;
+import com.example.OnlineMedicalAppointment.model.*;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 public class ProfilePanel extends JPanel {
 
-    private User currentUser;
+    private final User currentUser;
     private JTextField firstNameField;
     private JTextField lastNameField;
     private JTextField phoneNumberField;
     private JButton editButton;
-    private JButton changePasswordButton;
+    private final JButton changePasswordButton;
 
     public ProfilePanel(User user) {
         this.currentUser = user;
@@ -71,7 +68,25 @@ public class ProfilePanel extends JPanel {
         add(buttonPanel, gbc);
 
 
-        // TODO: Implement action listeners for edit and change password buttons
+        editButton.addActionListener(e -> {
+            // Toggle editability and button text
+            boolean editable = firstNameField.isEditable();
+            firstNameField.setEditable(!editable);
+            lastNameField.setEditable(!editable);
+            phoneNumberField.setEditable(!editable);
+            editButton.setText(editable ? "Edit Profile" : "Save Profile");
+
+            if (editable) {
+                // Save changes to database
+                saveProfileChanges();
+            }
+
+        });
+
+        changePasswordButton.addActionListener(e -> {
+            // Open Change Password Dialog
+            showChangePasswordDialog();
+        });
 
         editButton.addActionListener(e -> {
                 // Toggle editability and button text
@@ -95,18 +110,16 @@ public class ProfilePanel extends JPanel {
     }
 
     private void saveProfileChanges() {
-        // TODO: Implement saving changes to the database
-        String newFName = firstNameField.getText();
-        String newLName = lastNameField.getText();
-        String newPhoneNumber = phoneNumberField.getText();
-
-        // Call a method in UserDAO to update the user in the database
-        // UserDAO.updateUser(currentUser.getUserID(), newFName, newLName, newPhoneNumber);
+        currentUser.setFName(firstNameField.getText());
+        currentUser.setLName(lastNameField.getText());
+        currentUser.setPhoneNumber(phoneNumberField.getText());
+        
+        currentUser.updateUser();
         JOptionPane.showMessageDialog(this, "Profile changes saved (Database update not yet implemented).");
     }
 
     private void showChangePasswordDialog() {
-        // TODO: Implement change password dialog and logic
+        // Create the dialog panel
         JPasswordField oldPasswordField = new JPasswordField();
         JPasswordField newPasswordField = new JPasswordField();
         JPasswordField confirmNewPasswordField = new JPasswordField();
@@ -126,15 +139,26 @@ public class ProfilePanel extends JPanel {
             String oldPassword = new String(oldPasswordField.getPassword());
             String newPassword = new String(newPasswordField.getPassword());
             String confirmNewPassword = new String(confirmNewPasswordField.getPassword());
-
-            // TODO: Validate old password and update password in database
+            if(currentUser.getPassword().equals(oldPassword)){
+            // Update the password in the user object
             if (newPassword.equals(confirmNewPassword)) {
-                 // Call a method in UserDAO to update the password
-                 // UserDAO.updatePassword(currentUser.getUserID(), oldPassword, newPassword);
-                 JOptionPane.showMessageDialog(this, "Password changed (Database update not yet implemented).");
+                currentUser.setPassword(newPassword); 
+                if (currentUser.getUserType().equals("Patient")){  
+                    Patient user = (Patient) currentUser;
+                    user.updateUser();
+                }else if (currentUser.getUserType().equals("Doctor")){
+                        Doctor user = (Doctor) currentUser;
+                        user.updateUser();
+                }else if (currentUser.getUserType().equals("Admin")){
+                        Admin user = (Admin) currentUser;
+                        user.updateUser();
+                }
+
+                    JOptionPane.showMessageDialog(this, "Password changed succesfully.");
             } else {
                 JOptionPane.showMessageDialog(this, "New passwords do not match.", "Error", JOptionPane.ERROR_MESSAGE);
             }
+        }
         }
     }
 }

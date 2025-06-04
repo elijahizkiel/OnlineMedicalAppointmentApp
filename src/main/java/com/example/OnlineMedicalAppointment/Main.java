@@ -10,9 +10,16 @@ import com.example.OnlineMedicalAppointment.database.DatabaseConnector;
 import com.example.OnlineMedicalAppointment.database.DatabaseInitializer;
 import com.example.OnlineMedicalAppointment.ui.LoginFrame;
 
+/**
+ * Main entry point for the Online Medical Appointment application.
+ */
 public class Main {
     public static Connection connection;
 
+    /**
+     * Application entry point.
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         System.out.println("Starting Online Medical Appointment App...");
 
@@ -41,10 +48,18 @@ public class Main {
         }
     }
 
-// Getter and Setter for connection
+    /**
+     * Sets the database connection.
+     * @param conn the connection to set
+     */
     public static void setConnection(Connection conn) {
         connection = conn;
     }
+
+    /**
+     * Gets the database connection.
+     * @return the current connection
+     */
     public static Connection getConnection() {
         return connection;
     }

@@ -8,11 +8,22 @@ import com.example.OnlineMedicalAppointment.model.Patient;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * The main application frame for the Online Medical Appointment system.
+ * This frame adapts its content (tabs and menu options) based on the type of the logged-in user (Patient, Doctor, or Admin).
+ */
 public class MainAppFrame extends JFrame {
 
     private User currentUser;
     private final JTabbedPane tabbedPane;
 
+    /**
+     * Constructs the main application frame for a given user.
+     * Initializes the frame properties, sets the current user, and sets up the UI components
+     * including tabs and the menu bar based on the user's type.
+     *
+     * @param user The user object representing the currently logged-in user.
+     */
     public MainAppFrame(User user) {
         String userType = user.getUserType();
         switch (userType) {
@@ -48,6 +59,10 @@ public class MainAppFrame extends JFrame {
         setupMenuBar();
     }
 
+    /**
+     * Sets up the tabs in the JTabbedPane based on the current user's type.
+     * Different user types (Patient, Doctor, Admin) will see different sets of tabs.
+     */
     private void setupTabs() {
         String userType = currentUser.getUserType();
         switch (userType) {
@@ -71,6 +86,10 @@ public class MainAppFrame extends JFrame {
         }
     }
 
+    /**
+     * Sets up the menu bar for the frame.
+     * Includes a user menu displaying the current user's name with options for viewing the profile and logging out.
+     */
     private void setupMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         JMenu userMenu = new JMenu(currentUser.getFName() + " " + currentUser.getLName()); // Human Avatar/User Name

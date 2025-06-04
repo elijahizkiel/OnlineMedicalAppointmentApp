@@ -13,10 +13,18 @@ import javax.swing.DefaultListModel;
 import com.example.OnlineMedicalAppointment.model.Doctor;
 import com.example.OnlineMedicalAppointment.model.Appointment;
 
+/**
+ * Panel for displaying the doctor's home view and appointments.
+ */
 public class DoctorHomePanel extends JPanel {
 
     private User currentUser;
 
+    /**
+     * Constructs the DoctorHomePanel for the given user.
+     * 
+     * @param user the current user
+     */
     public DoctorHomePanel(User user) {
         this.currentUser = user;
         setLayout(new BorderLayout());

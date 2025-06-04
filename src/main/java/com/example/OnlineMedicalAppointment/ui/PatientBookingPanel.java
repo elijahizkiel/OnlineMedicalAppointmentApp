@@ -17,10 +17,16 @@ import org.jdesktop.swingx.decorator.ColorHighlighter; // Needed for TODO
 import org.jdesktop.swingx.decorator.HighlightPredicate; // Needed for TODO
 import java.awt.Color; // Needed for TODO
 
+/**
+ * Panel for booking appointments as a patient.
+ */
 public class PatientBookingPanel extends JPanel {
+    private final User currentUser;
 
-    private User currentUser;
-
+    /**
+     * Constructs the PatientBookingPanel for the given user.
+     * @param user the current user
+     */
     public PatientBookingPanel(User user) {
         this.currentUser = user;
         setLayout(new BorderLayout());
@@ -75,8 +81,11 @@ public class PatientBookingPanel extends JPanel {
 
         
 
-        // Method to get all available time slots for a day ( work hours excluding booked hours)
-        // This should ideally be configurable or fetched from DB based on doctor/clinic hours
+        /**
+         * Gets all available time slots for a day (work hours excluding booked hours).
+         * This should ideally be configurable or fetched from DB based on doctor/clinic hours.
+         * @return list of all time slots
+         */
         public List<String> getAllTimeSlots() {
              List<String> allSlots = new java.util.ArrayList<>();
              // Simulate standard work hours slots (e.g., 9 AM to 5 PM, 30 min intervals)
@@ -93,8 +102,12 @@ public class PatientBookingPanel extends JPanel {
         // public boolean isDayFullyOccupied(Date date) { ... }
         
 
-        // Helper method to populate the time picker
-        // This method needs to fetch occupied slots and mark/disable them in the JComboBox
+        /**
+         * Helper method to populate the time picker.
+         * This method needs to fetch occupied slots and mark/disable them in the JComboBox.
+         * @param timePicker the time picker combo box
+         * @param date the selected date
+         */
         private void populateTimePicker(JComboBox<String> timePicker, Date date) {
         timePicker.removeAllItems();
         // List<String> allSlots = DatabaseAccessor.getAllTimeSlots();

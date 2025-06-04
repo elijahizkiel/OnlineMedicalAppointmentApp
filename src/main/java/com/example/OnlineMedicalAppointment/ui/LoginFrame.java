@@ -21,6 +21,9 @@ import com.example.OnlineMedicalAppointment.AuthService;
 import com.example.OnlineMedicalAppointment.database.DatabaseConnector;
 import com.example.OnlineMedicalAppointment.model.User;
 
+/**
+ * Frame for user login.
+ */
 public class LoginFrame extends JFrame {
 
     private JTextField usernameField;
@@ -28,6 +31,9 @@ public class LoginFrame extends JFrame {
     private final JButton loginButton;
     private final JButton signupButton;
 
+    /**
+     * Constructs the LoginFrame.
+     */
     public LoginFrame() {
         setTitle("Login");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -90,6 +96,12 @@ public class LoginFrame extends JFrame {
         });
     }
 
+    /**
+     * Authenticates the user with the given username and password.
+     * @param username the username
+     * @param password the password
+     * @return true if authentication is successful, false otherwise
+     */
     private boolean authenticateUser(String username, String password) {
         // Use AuthService to authenticate user               
 
