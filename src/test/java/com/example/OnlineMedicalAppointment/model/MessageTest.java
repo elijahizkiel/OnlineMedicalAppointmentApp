@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class MessageTest {
     @Test
     void testMessageFields() {
-        Message msg = new Message(1, 2, 3, 4, "sender", "receiver", "Hello");
+        Message msg = new Message(1, 2, 3, "Hello", "sender", "receiver");
         assertEquals(1, msg.getId());
         assertEquals(2, msg.getSenderId());
         assertEquals(3, msg.getReceiverId());

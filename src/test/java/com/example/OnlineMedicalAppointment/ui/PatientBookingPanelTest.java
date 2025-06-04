@@ -17,7 +17,7 @@ class PatientBookingPanelTest {
 
     @BeforeEach
     void setUp() {
-        dummyUser = new Patient("Test", "User", "testuser", "pass", "1234567890");
+        dummyUser = new Patient("Test", "User", "testuser","pass", "1234567890");
         panel = new PatientBookingPanel(dummyUser);
     }
 

@@ -76,7 +76,7 @@ public class Appointment {
          * Gets the patient ID.
          * @return the patient ID
          */
-        public int getMadeBy() {
+        public int getPatientID() {
             return patientID;
         }
 
@@ -84,7 +84,7 @@ public class Appointment {
          * Sets the patient ID.
          * @param madeBy the patient ID
          */
-        public void setMadeBy(int madeBy) {
+        public void setPatientID(int madeBy) {
             this.patientID = madeBy;
         }
 

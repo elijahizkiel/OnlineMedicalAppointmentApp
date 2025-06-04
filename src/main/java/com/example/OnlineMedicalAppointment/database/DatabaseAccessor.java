@@ -366,7 +366,7 @@ public abstract class DatabaseAccessor {
      * Updates a message in the database.
      * @param message the message to update
      */
-    public void updateMessage(Message message){
+    public boolean updateMessage(Message message){
         String sql = "UPDATE Messages SET roomID = ?, senderId = ?, receiverId = ?, messageText = ?, timestamp = ? WHERE messageID = ?";
         try (Connection conn = DatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -379,17 +379,116 @@ public abstract class DatabaseAccessor {
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows > 0) {
                 System.out.println("Message updated successfully.");
+                return true;
             } else {
                 System.out.println("Message not found for update.");
+                return false;
             }
         } catch (SQLException e) {
             System.err.println("Error updating message: " + e.getMessage());
+            return false;
         }
     }
-    public void deleteMessage(int messageId){}
-    
-    public void addAppointment(Appointment appointment){}
-    public void updateAppointment(Appointment appointment){}
-    public void deleteAppointment(int appointmentId){}
-}
+    public boolean deleteMessage(int messageId){
+        String sql = "DELETE FROM Messages WHERE messageID = ?";
+            try (Connection conn = DatabaseConnector.getConnection();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, messageId);
+                int affectedRows = pstmt.executeUpdate();
+                if (affectedRows > 0) {
+                System.out.println("Message deleted successfully with ID: " + messageId);
+                return true;
+                } else {
+                System.out.println("Message not found for deletion with ID: " + messageId);
+                    return false;
+            }
+            } catch (SQLException e) {
+                System.err.println("Error deleting message: " + e.getMessage());
+            return false;
+            }
+            }
+            
+            /**
+             * Adds an appointment to the database.
+             * @param appointment the appointment to add
+             * @return true if successful, false otherwise
+             */
+            public static boolean addAppointment(Appointment appointment){
+                String sql = "INSERT INTO appointments (patientID, doctorID, appointmentTime, status) VALUES (?, ?, ?, ?)";
+                try (Connection conn = DatabaseConnector.getConnection();
+                     PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                        // Convert LocalDateTime to Timestamp
+                        java.sql.Timestamp timestamp = java.sql.Timestamp.valueOf(appointment.getAppointmentTime());
+                        pstmt.setInt(1, appointment.getPatientID());
+                        pstmt.setInt(2, appointment.getDoctorID());
+                        pstmt.setTimestamp(3, timestamp);
+                        pstmt.setString(4, appointment.getStatus());
+                        int affectedRows = pstmt.executeUpdate();
+                        if (affectedRows > 0) {
+                            System.out.println("Appointment added successfully.");
+                            return true;
+                        } else {
+                            System.out.println("Failed to add appointment.");
+                            return false;
+                        }
+                } catch (SQLException e) {
+                    System.err.println("Error adding appointment: " + e.getMessage());
+                    return false;
+                }
+            }
+
+            /**
+             * Updates an appointment in the database.
+             * @param appointment the appointment to update
+             * @return true if successful, false otherwise
+             */
+            public static boolean updateAppointment(Appointment appointment){
+                String sql = "UPDATE appointments SET patientID = ?, doctorID = ?, appointmentTime = ?, status = ? WHERE scheduleID = ?";
+                try (Connection conn = DatabaseConnector.getConnection();
+                     PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                     java.sql.Timestamp timestamp = java.sql.Timestamp.valueOf(appointment.getAppointmentTime());
+                       
+                    pstmt.setInt(1, appointment.getPatientID());
+                    pstmt.setInt(2, appointment.getDoctorID());
+                    pstmt.setTimestamp(3, timestamp);
+                    pstmt.setString(4, appointment.getStatus());
+                    pstmt.setInt(5, appointment.getScheduleID());
+                    int affectedRows = pstmt.executeUpdate();
+                    if (affectedRows > 0) {
+                        System.out.println("Appointment updated successfully with ID: " + appointment.getScheduleID());
+                        return true;
+                    } else {
+                        System.out.println("Appointment not found for update with ID: " + appointment.getScheduleID());
+                        return false;
+                    }
+                } catch (SQLException e) {
+                    System.err.println("Error updating appointment: " + e.getMessage());
+                    return false;
+                }
+            }
+
+            /**
+             * Deletes an appointment from the database.
+             * @param appointmentId the ID of the appointment to delete
+             * @return true if successful, false otherwise
+             */
+            public static boolean deleteAppointment(int appointmentId){
+                String sql = "DELETE FROM appointments WHERE scheduleID = ?";
+                try (Connection conn = DatabaseConnector.getConnection();
+                     PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                    pstmt.setInt(1, appointmentId);
+                    int affectedRows = pstmt.executeUpdate();
+                    if (affectedRows > 0) {
+                        System.out.println("Appointment deleted successfully with ID: " + appointmentId);
+                        return true;
+                    } else {
+                        System.out.println("Appointment not found for deletion with ID: " + appointmentId);
+                        return false;
+                    }
+                } catch (SQLException e) {
+                    System.err.println("Error deleting appointment: " + e.getMessage());
+                    return false;
+                }
+            }
+        }    
 

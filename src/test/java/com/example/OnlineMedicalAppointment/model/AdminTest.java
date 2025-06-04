@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AdminTest {
     @Test
     void testAdminFields() {
-        Admin a = new Admin(1, "Alice", "Admin", "alice", "pass", "555-0000");
+        Admin a = new Admin(1, "Alice", "Admin", "alice", "555-0000");
         assertEquals(1, a.getUserID());
         assertEquals("Alice", a.getFName());
         assertEquals("Admin", a.getLName());

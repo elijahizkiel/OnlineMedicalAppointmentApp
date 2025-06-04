@@ -6,6 +6,9 @@ import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Tool;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 
 public class GeminiClient {
@@ -14,9 +17,9 @@ public class GeminiClient {
             .build();
 
     private final GenerateContentConfig config;
+    private final List<String> chatHistory = new ArrayList<>();
 
     public GeminiClient() {
-        // Register DatabaseAccessor methods for function calling
         try {
             Class<?> dbClass = DatabaseAccessor.class;
             ImmutableList<Method> functions = ImmutableList.of(
@@ -30,26 +33,39 @@ public class GeminiClient {
                 dbClass.getMethod("getUserByID", int.class)
             );
             this.config = GenerateContentConfig.builder()
-                .tools(ImmutableList.of(
-                    Tool.builder().functions(functions).build()
-                ))
+                .tools(
+                    ImmutableList.of(
+                        Tool.builder().functions(functions).build()
+                    )
+                )
                 .build();
         } catch (NoSuchMethodException e) {
             throw new RuntimeException("Failed to register DatabaseAccessor functions", e);
         }
     }
 
+    // Stores chat history, manages context, and uses autofunctioncalling
     public String generateContent(String prompt) {
+        chatHistory.add("User: " + prompt);
         GenerateContentResponse response = client.models.generateContent(
             "gemini-2.0-flash-001",
             prompt,
             config
         );
+        String reply = response.text();
+        chatHistory.add("Gemini: " + reply);
+
         StringBuilder sb = new StringBuilder();
-        sb.append("Generated content based on prompt: ").append(response.text());
-        response.automaticFunctionCallingHistory().ifPresent(history -> {
-            sb.append("\nFunction calling history: ").append(history);
-        });
+        sb.append(reply);
+
+        // Optionally append function calling history if present
+        Optional<?> history = response.automaticFunctionCallingHistory();
+        history.ifPresent(h -> sb.append("\nFunction calling history: ").append(h));
+
         return sb.toString();
+    }
+
+    public List<String> getChatHistory() {
+        return new ArrayList<>(chatHistory);
     }
 }
