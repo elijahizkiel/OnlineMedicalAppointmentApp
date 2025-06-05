@@ -12,7 +12,6 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -127,6 +126,17 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.6.3</version> <!-- Use latest available -->
+                <configuration>
+                    <doctitle>My Project JavaDoc</doctitle>
+                    <reportOutputDirectory>${project.build.directory}/javadoc</reportOutputDirectory>
+                </configuration>
+            </plugin>
+    
         </plugins>
     </build>
 </project>

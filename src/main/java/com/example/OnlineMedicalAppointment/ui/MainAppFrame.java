@@ -15,6 +15,8 @@ import com.example.OnlineMedicalAppointment.model.Admin;
 import com.example.OnlineMedicalAppointment.model.Doctor;
 import com.example.OnlineMedicalAppointment.model.Patient;
 import com.example.OnlineMedicalAppointment.model.User;
+import com.example.OnlineMedicalAppointment.ui.SystemActivityPanel;
+import com.example.OnlineMedicalAppointment.ui.UserManagementPanel;
 
 /**
  * The main application frame for the Online Medical Appointment system.
@@ -86,9 +88,12 @@ public class MainAppFrame extends JFrame {
                 tabbedPane.addTab("Chat-Room", new DoctorChatPanel(currentUser));
                 break;
             }
-            case "Admin":
+            case "Admin": {
                 tabbedPane.addTab("Dashboard", new AdminDashboardPanel(currentUser));
+                tabbedPane.addTab("System Activity", new SystemActivityPanel());
+                tabbedPane.addTab("User Management", new UserManagementPanel());
                 break;
+            }
             // Admin might also need a list of doctors/users tab
             default: // Handle unknown user type or show a default view
                 tabbedPane.addTab("Welcome", new JPanel()); // Placeholder
