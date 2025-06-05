@@ -6,7 +6,6 @@ import javax.swing.*;
 
 import java.awt.*;
 
-
 import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 import com.example.OnlineMedicalAppointment.model.Doctor;
 import com.example.OnlineMedicalAppointment.model.User;
@@ -31,28 +30,59 @@ public class SignupFrame extends JFrame {
         setSize(500, 500);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
+        getContentPane().setBackground(StyleConstants.LIGHT_BG);
+
+        // Title
+        JLabel titleLabel = StyleConstants.createLabel("Create Account", StyleConstants.TITLE_FONT);
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
+        add(titleLabel, BorderLayout.NORTH);
 
         // Input Panel
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new GridLayout(9, 2, 10, 10));
-        inputPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
+        inputPanel.setBackground(StyleConstants.LIGHT_BG);
 
-        JLabel firstNameLabel = new JLabel("First Name:");
+        JLabel firstNameLabel = StyleConstants.createLabel("First Name:", StyleConstants.NORMAL_FONT);
         firstNameField = new JTextField();
-        JLabel lastNameLabel = new JLabel("Last Name:");
+        firstNameField.setBorder(StyleConstants.INPUT_BORDER);
+        firstNameField.setBackground(StyleConstants.WHITE);
+
+        JLabel lastNameLabel = StyleConstants.createLabel("Last Name:", StyleConstants.NORMAL_FONT);
         lastNameField = new JTextField();
-        JLabel userTypeLabel = new JLabel("User Type:");
+        lastNameField.setBorder(StyleConstants.INPUT_BORDER);
+        lastNameField.setBackground(StyleConstants.WHITE);
+
+        JLabel userTypeLabel = StyleConstants.createLabel("User Type:", StyleConstants.NORMAL_FONT);
         userTypeComboBox = new JComboBox<>(new String[]{"Patient", "Doctor", "Admin"});
-        JLabel usernameLabel = new JLabel("Username:");
+        userTypeComboBox.setBorder(StyleConstants.INPUT_BORDER);
+        userTypeComboBox.setBackground(StyleConstants.WHITE);
+
+        JLabel usernameLabel = StyleConstants.createLabel("Username:", StyleConstants.NORMAL_FONT);
         usernameField = new JTextField();
-        JLabel passwordLabel = new JLabel("Password:");
+        usernameField.setBorder(StyleConstants.INPUT_BORDER);
+        usernameField.setBackground(StyleConstants.WHITE);
+
+        JLabel passwordLabel = StyleConstants.createLabel("Password:", StyleConstants.NORMAL_FONT);
         passwordField = new JPasswordField();
-        JLabel confirmPasswordLabel = new JLabel("Confirm Password:");
+        passwordField.setBorder(StyleConstants.INPUT_BORDER);
+        passwordField.setBackground(StyleConstants.WHITE);
+
+        JLabel confirmPasswordLabel = StyleConstants.createLabel("Confirm Password:", StyleConstants.NORMAL_FONT);
         confirmPasswordField = new JPasswordField();
-        JLabel specialtyLabel = new JLabel("Specialty (for Doctors):");
+        confirmPasswordField.setBorder(StyleConstants.INPUT_BORDER);
+        confirmPasswordField.setBackground(StyleConstants.WHITE);
+
+        JLabel specialtyLabel = StyleConstants.createLabel("Specialty (for Doctors):", StyleConstants.NORMAL_FONT);
         specialtyField = new JTextField();
-        JLabel phoneNumberLabel = new JLabel("Phone Number:");
+        specialtyField.setBorder(StyleConstants.INPUT_BORDER);
+        specialtyField.setBackground(StyleConstants.WHITE);
+
+        JLabel phoneNumberLabel = StyleConstants.createLabel("Phone Number:", StyleConstants.NORMAL_FONT);
         phoneNumberField = new JTextField();
+        phoneNumberField.setBorder(StyleConstants.INPUT_BORDER);
+        phoneNumberField.setBackground(StyleConstants.WHITE);
 
         inputPanel.add(firstNameLabel);
         inputPanel.add(firstNameField);
@@ -68,12 +98,14 @@ public class SignupFrame extends JFrame {
         inputPanel.add(confirmPasswordField);
         inputPanel.add(specialtyLabel);
         inputPanel.add(specialtyField);
-         inputPanel.add(phoneNumberLabel);
+        inputPanel.add(phoneNumberLabel);
         inputPanel.add(phoneNumberField);
 
         // Button Panel
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout());
+        buttonPanel.setBackground(StyleConstants.LIGHT_BG);
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
 
         signupButton = new JButton("Sign Up");
         backToLoginButton = new JButton("Back to Login");
@@ -87,39 +119,38 @@ public class SignupFrame extends JFrame {
 
         // Button actions
         signupButton.addActionListener(e -> {
-                String firstName = firstNameField.getText();
-                String lastName = lastNameField.getText();
-                String userType = (String) userTypeComboBox.getSelectedItem();
-                String username = usernameField.getText();
-                String password = new String(passwordField.getPassword());
-                String confirmPassword = new String(confirmPasswordField.getPassword());
-                String specialty = specialtyField.getText();
-                String phoneNumber = phoneNumberField.getText();
+            String firstName = firstNameField.getText();
+            String lastName = lastNameField.getText();
+            String userType = (String) userTypeComboBox.getSelectedItem();
+            String username = usernameField.getText();
+            String password = new String(passwordField.getPassword());
+            String confirmPassword = new String(confirmPasswordField.getPassword());
+            String specialty = specialtyField.getText();
+            String phoneNumber = phoneNumberField.getText();
 
-                if (!password.equals(confirmPassword)) {
-                    JOptionPane.showMessageDialog(SignupFrame.this, "Passwords do not match.", "Signup Error", JOptionPane.ERROR_MESSAGE);
-                    return;
-                }
+            if (!password.equals(confirmPassword)) {
+                JOptionPane.showMessageDialog(SignupFrame.this, "Passwords do not match.", "Signup Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
-                if (createUser(firstName, lastName, username, password, userType, specialty, phoneNumber)) {
-                    JOptionPane.showMessageDialog(SignupFrame.this, "Signup successful!");
-                    // Redirect to Login Frame
-                    LoginFrame loginFrame = new LoginFrame();
-                    loginFrame.setVisible(true);
-                    dispose();
-                } else {
-                    JOptionPane.showMessageDialog(SignupFrame.this, "Signup failed. Please try again.", "Signup Error", JOptionPane.ERROR_MESSAGE);
-                }
-            
-        });
-
-        backToLoginButton.addActionListener( e-> {
-                // Open Login Frame
+            if (createUser(firstName, lastName, username, password, userType, specialty, phoneNumber)) {
+                JOptionPane.showMessageDialog(SignupFrame.this, "Signup successful!");
+                // Redirect to Login Frame
                 LoginFrame loginFrame = new LoginFrame();
                 loginFrame.setVisible(true);
-                dispose(); // Close the signup frame
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(SignupFrame.this, "Signup failed. Please try again.", "Signup Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
-    }    
+
+        backToLoginButton.addActionListener(e -> {
+            // Open Login Frame
+            LoginFrame loginFrame = new LoginFrame();
+            loginFrame.setVisible(true);
+            dispose(); // Close the signup frame
+        });
+    }
 
     private boolean createUser(String firstName, String lastName, String username, String password, String userType, String specialty, String phoneNumber) {
         User user;
@@ -136,5 +167,4 @@ public class SignupFrame extends JFrame {
         }
         return DatabaseAccessor.addUser(user);
     }
-
 }

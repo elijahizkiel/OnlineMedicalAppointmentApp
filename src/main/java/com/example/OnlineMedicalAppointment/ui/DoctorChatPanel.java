@@ -21,21 +21,21 @@ import com.example.OnlineMedicalAppointment.model.ChatRoom;
 import com.example.OnlineMedicalAppointment.model.Message;
 import com.example.OnlineMedicalAppointment.ui.StyleConstants;
 
-public class PatientChatPanel extends JPanel {
+public class DoctorChatPanel extends JPanel {
 
     private final User currentUser;
-    private ChatRoom selectedChatRoom = null;
     private JTextArea messagesDisplayArea;
     private JTextField messageInputField;
+    private ChatRoom selectedChatRoom = null;
 
-    public PatientChatPanel(User user) {
+    public DoctorChatPanel(User user) {
         this.currentUser = user;
         setLayout(new BorderLayout());
         setBackground(StyleConstants.LIGHT_BG);
         setBorder(BorderFactory.createEmptyBorder(10, 15, 15, 15));
         
         // Title
-        JLabel titleLabel = StyleConstants.createLabel("Chat with Doctors", StyleConstants.TITLE_FONT);
+        JLabel titleLabel = StyleConstants.createLabel("Chat with Patients", StyleConstants.TITLE_FONT);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         add(titleLabel, BorderLayout.NORTH);

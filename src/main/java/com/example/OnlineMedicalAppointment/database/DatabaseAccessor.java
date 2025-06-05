@@ -140,10 +140,44 @@ public abstract class DatabaseAccessor {
                         rs.getString("phoneNumber")
                     );
                     doctors.add(doctor);
+                    System.out.println("Doctor added: " + doctor.getFName() + " " + doctor.getLName());
+                }
+                if(rs.getFetchSize() == 0){
+                    System.out.println("No Doctor is found");
                 }
             }
         } catch (SQLException e) {
             System.out.println("SQL Exception thrown while getting doctors by name and specialty: " + e.getMessage());
+        }
+        return doctors;
+    }
+
+    public static List<Doctor> getDoctorsByNameOrSpecialty(String query){
+        String sql = "SELECT * FROM users_table WHERE userType = 'Doctor' AND (FName = ? OR LName = ? OR specialty = ?)";
+        List<Doctor> doctors = new ArrayList<>();
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, query);
+            pstmt.setString(2, query);
+            pstmt.setString(3, query);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                System.out.println("Doctors found(from DBAccessor): " + rs.getFetchSize());
+                while (rs.next()) {
+                    Doctor doctor = new Doctor(
+                        rs.getInt("userID"),
+                        rs.getString("FName"),
+                        rs.getString("LName"),
+                        rs.getString("username"),
+                        rs.getString("userType"),
+                        rs.getString("specialty"),
+                        rs.getString("phoneNumber")
+                    );
+                    doctors.add(doctor);
+                    System.out.println(doctor.toString());
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL Exception thrown while getting doctor by name or specialty: " + e.getMessage());
         }
         return doctors;
     }

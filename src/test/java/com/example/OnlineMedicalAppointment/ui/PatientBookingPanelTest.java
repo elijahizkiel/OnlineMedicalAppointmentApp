@@ -50,6 +50,7 @@ class PatientBookingPanelTest {
     }
 
     // Helper to access private timePicker field via reflection
+    @SuppressWarnings("unchecked")
     private JComboBox<String> getTimePicker() {
         try {
             var field = PatientBookingPanel.class.getDeclaredField("timePicker");

@@ -1,15 +1,16 @@
 package com.example.OnlineMedicalAppointment.ui;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 import com.example.OnlineMedicalAppointment.model.Appointment;
@@ -20,6 +21,7 @@ import com.example.OnlineMedicalAppointment.model.User;
  */
 public class AdminDashboardPanel extends JPanel {
 
+    @SuppressWarnings("unused")
     private final User currentUser;
 
     /**
@@ -30,44 +32,78 @@ public class AdminDashboardPanel extends JPanel {
 
     public AdminDashboardPanel(User user) {
         this.currentUser = user;
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        JLabel title = new JLabel("Admin Dashboard - Statistics");
-        title.setFont(new Font("Arial", Font.BOLD, 20));
-        title.setAlignmentX(Component.CENTER_ALIGNMENT);
-        add(title);
-        add(Box.createRigidArea(new Dimension(0, 15)));
-
+        setLayout(new BorderLayout());
+        setBackground(StyleConstants.LIGHT_BG);
+        
+        // Title panel
+        JLabel titleLabel = StyleConstants.createLabel("Admin Dashboard - Statistics", StyleConstants.TITLE_FONT);
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        add(titleLabel, BorderLayout.NORTH);
+        
+        // Main content panel
+        JPanel mainContentPanel = StyleConstants.createStyledPanel(new BorderLayout());
+        
+        // Statistics panel with grid layout
+        JPanel statsPanel = StyleConstants.createStyledPanel();
+        statsPanel.setLayout(new BoxLayout(statsPanel, BoxLayout.Y_AXIS));
+        statsPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 40, 40));
+        
+        // Get appointment statistics
         List<Appointment> allAppointments = DatabaseAccessor.getAllAppointments();
         long heldCount = allAppointments.stream().filter(a -> "Held".equalsIgnoreCase(a.getStatus())).count();
         long canceledCount = allAppointments.stream().filter(a -> "Canceled".equalsIgnoreCase(a.getStatus())).count();
         long pendingCount = allAppointments.stream().filter(a -> "Pending".equalsIgnoreCase(a.getStatus())).count();
-
-        // Statistics labels
-        add(statLabel("Total Users: ", DatabaseAccessor.getUsersCountByType("Admin")+ 
-            DatabaseAccessor.getUsersCountByType("Patient") +
-            DatabaseAccessor.getUsersCountByType("Doctor")));
-        add(statLabel("Patients: ", DatabaseAccessor.getUsersCountByType("Patient")));
-        add(statLabel("Doctors: ", DatabaseAccessor.getUsersCountByType("Doctor")));
-        add(statLabel("Admins: ", DatabaseAccessor.getUsersCountByType("Admins")));
-        add(Box.createRigidArea(new Dimension(0, 10)));
-        add(statLabel("Total Appointments: ", allAppointments.size()));
-        add(statLabel("Appointments Held: ", heldCount));
-        add(statLabel("Appointments Pending: ", pendingCount));
-        add(statLabel("Appointments Canceled: ", canceledCount));
-        add(Box.createVerticalGlue());
+        
+        // User statistics section
+        JPanel userStatsPanel = StyleConstants.createSectionPanel("User Statistics");
+        userStatsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        userStatsPanel.add(statLabel("Total Users: ", DatabaseAccessor.getUsersCountByType("Admin") + 
+            DatabaseAccessor.getUsersCountByType("Patient") + DatabaseAccessor.getUsersCountByType("Doctor")));
+        userStatsPanel.add(statLabel("Patients: ", DatabaseAccessor.getUsersCountByType("Patient")));
+        userStatsPanel.add(statLabel("Doctors: ", DatabaseAccessor.getUsersCountByType("Doctor")));
+        userStatsPanel.add(statLabel("Admins: ", DatabaseAccessor.getUsersCountByType("Admin")));
+        
+        // Appointment statistics section
+        JPanel appointmentStatsPanel = StyleConstants.createSectionPanel("Appointment Statistics");
+        appointmentStatsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        appointmentStatsPanel.add(statLabel("Total Appointments: ", allAppointments.size()));
+        appointmentStatsPanel.add(statLabel("Appointments Held: ", heldCount));
+        appointmentStatsPanel.add(statLabel("Appointments Pending: ", pendingCount));
+        appointmentStatsPanel.add(statLabel("Appointments Canceled: ", canceledCount));
+        
+        // Add sections to stats panel with proper alignment
+        statsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        statsPanel.add(userStatsPanel);
+        statsPanel.add(Box.createRigidArea(new Dimension(0, 20)));
+        statsPanel.add(appointmentStatsPanel);
+        
+        // Add stats panel to main content
+        JPanel statsWrapper = StyleConstants.createStyledPanel(new BorderLayout());
+        statsWrapper.setBackground(StyleConstants.LIGHT_BG);
+        statsWrapper.setBorder(BorderFactory.createEmptyBorder(0, 80, 40, 80));
+        
+        JPanel centerWrapper = new JPanel(new BorderLayout());
+        centerWrapper.setBackground(StyleConstants.LIGHT_BG);
+        centerWrapper.add(statsPanel, BorderLayout.NORTH);
+        
+        statsWrapper.add(centerWrapper, BorderLayout.CENTER);
+        mainContentPanel.add(statsWrapper, BorderLayout.CENTER);
+        add(mainContentPanel, BorderLayout.CENTER);
+        
+        // Add some padding at the bottom
+        add(Box.createRigidArea(new Dimension(0, 20)), BorderLayout.SOUTH);
     }
 
     private JPanel statLabel(String label, long value) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JLabel l = new JLabel(label);
-        l.setFont(new Font("Arial", Font.PLAIN, 16));
-        JLabel v = new JLabel(String.valueOf(value));
-        v.setFont(new Font("Arial", Font.BOLD, 16));
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 8));
+        JLabel l = StyleConstants.createLabel(label, StyleConstants.NORMAL_FONT);
+        JLabel v = StyleConstants.createLabel(String.valueOf(value), StyleConstants.NORMAL_FONT.deriveFont(java.awt.Font.BOLD));
+        v.setForeground(StyleConstants.PRIMARY_COLOR);
         panel.add(l);
         panel.add(v);
         panel.setOpaque(false);
+        panel.setMaximumSize(new Dimension(300, 30));
         return panel;
     }
 }

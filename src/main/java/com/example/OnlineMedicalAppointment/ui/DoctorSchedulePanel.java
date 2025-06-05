@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -21,16 +20,16 @@ import com.github.lgooddatepicker.components.DatePickerSettings;
 
 /**
  * Panel for displaying and managing a doctor's schedule.
+ * Shows a date picker and a table of appointments for the selected date.
  */
 public class DoctorSchedulePanel extends JPanel {
 
     private final User currentUser;
     private final JTable appointmentTable;
-    private DefaultListModel<String> appointmentListModel;
 
     /**
      * Constructs the DoctorSchedulePanel for the given user.
-     * @param user the current user
+     * @param user the current user (doctor)
      */
     public DoctorSchedulePanel(User user) {
         this.currentUser = user;
@@ -74,6 +73,11 @@ public class DoctorSchedulePanel extends JPanel {
         add(buttonPanel, BorderLayout.SOUTH);
     }
 
+    /**
+     * Loads and displays the appointments for the given date in the table.
+     * @param date The date to load appointments for.
+     * @param model The table model to populate.
+     */
     private void loadAppointmentsForDate(LocalDate date, javax.swing.table.DefaultTableModel model) {
         model.setRowCount(0); // Clear table
         if (date == null) return;
