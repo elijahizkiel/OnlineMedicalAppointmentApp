@@ -138,6 +138,9 @@ public class PatientBookingPanel extends JPanel {
 
         // Fetch existing appointments for the current user
         List<Appointment> userAppointments = DatabaseAccessor.getAppointments(currentUser.getUserID());
+        datePicker = new DatePicker(dateSettings);
+        datePicker.setDateToToday();
+        // Set the veto policy AFTER constructing the DatePicker
         dateSettings.setVetoPolicy(new OccupiedDateVetoPolicy(userAppointments));
         datePicker = new DatePicker(dateSettings);
         datePicker.setDateToToday();

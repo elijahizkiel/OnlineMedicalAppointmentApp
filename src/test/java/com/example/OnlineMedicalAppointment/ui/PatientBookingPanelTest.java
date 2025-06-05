@@ -1,17 +1,19 @@
 package com.example.OnlineMedicalAppointment.ui;
 
-import com.example.OnlineMedicalAppointment.model.User;
-import com.example.OnlineMedicalAppointment.model.Patient;
-import com.example.OnlineMedicalAppointment.model.Doctor;
-import com.example.OnlineMedicalAppointment.model.Appointment;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import javax.swing.*;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import javax.swing.JComboBox;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.example.OnlineMedicalAppointment.model.Doctor;
+import com.example.OnlineMedicalAppointment.model.Patient;
+import com.example.OnlineMedicalAppointment.model.User;
 
 class PatientBookingPanelTest {
     private PatientBookingPanel panel;

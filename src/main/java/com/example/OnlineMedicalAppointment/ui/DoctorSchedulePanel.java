@@ -5,10 +5,17 @@ import java.awt.Dimension;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import javax.swing.*;
-import com.example.OnlineMedicalAppointment.model.User;
-import com.example.OnlineMedicalAppointment.model.Appointment;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+
 import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
+import com.example.OnlineMedicalAppointment.model.Appointment;
+import com.example.OnlineMedicalAppointment.model.User;
 import com.github.lgooddatepicker.components.DatePicker;
 import com.github.lgooddatepicker.components.DatePickerSettings;
 
@@ -17,8 +24,8 @@ import com.github.lgooddatepicker.components.DatePickerSettings;
  */
 public class DoctorSchedulePanel extends JPanel {
 
-    private User currentUser;
-    private JTable appointmentTable;
+    private final User currentUser;
+    private final JTable appointmentTable;
     private DefaultListModel<String> appointmentListModel;
 
     /**
