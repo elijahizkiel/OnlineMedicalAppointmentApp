@@ -1,7 +1,8 @@
 package com.example.OnlineMedicalAppointment.model;
 
 /**
- * Interface representing a user in the Online Medical Appointment system.
+ * User interface for the Online Medical Appointment system.
+ * Defines common user-related methods for all user types.
  */
 public interface User {
     /**
@@ -47,16 +48,16 @@ public interface User {
     void setUsername(String username);
 
     /**
-     * Sets the password.
-     * @param password the password
-     */
-    void setPassword(String password);
-
-    /**
      * Gets the password.
      * @return the password
      */
     String getPassword();
+
+    /**
+     * Sets the password.
+     * @param password the password
+     */
+    void setPassword(String password);
 
     /**
      * Gets the user type.
@@ -71,13 +72,13 @@ public interface User {
     void setUserType(String userType);
 
     /**
-     * Gets the specialty (for doctors).
+     * Gets the specialty (if applicable).
      * @return the specialty
      */
     String getSpecialty();
 
     /**
-     * Sets the specialty (for doctors).
+     * Sets the specialty (if applicable).
      * @param specialty the specialty
      */
     void setSpecialty(String specialty);
@@ -94,7 +95,22 @@ public interface User {
      */
     void setPhoneNumber(String phoneNumber);
 
+    /**
+     * Updates the user information in the database.
+     * @return true if update was successful, false otherwise
+     */
     boolean updateUser();
+
+    /**
+     * Deletes the user from the database.
+     * @return true if deletion was successful, false otherwise
+     */
     boolean deleteUser();
 
+    /**
+     * Updates the user information in the database.
+     * @param user The user to update
+     * @return true if update was successful, false otherwise
+     */
+    boolean updateUser(User user);
 }

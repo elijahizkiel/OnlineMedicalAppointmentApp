@@ -4,13 +4,13 @@ import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 
 /**
  * Represents a Patient user in the Online Medical Appointment system.
+ * Stores patient-specific information and provides patient-related functionality.
  * Extends DatabaseAccessor and implements User interface.
  */
 public class Patient extends  DatabaseAccessor implements User{
 
     /**
      * Constructor for Patient user.
-     * 
      * @param userID    the user ID
      * @param FName     the first name
      * @param LName     the last name
@@ -213,6 +213,7 @@ public class Patient extends  DatabaseAccessor implements User{
 
     /**
      * Deletes this patient from the database.
+     * @return true if deletion was successful, false otherwise
      */
     @Override
     public boolean deleteUser() {        
@@ -221,22 +222,20 @@ public class Patient extends  DatabaseAccessor implements User{
     
     /**
      * Updates the user information in the database.
-     * 
+     * @return true if update was successful, false otherwise
+     */
+    @Override
+    public boolean updateUser() {
+        return super.updateUser(this);
+    }
+
+    /**
+     * Updates the user information in the database.
      * @param user The user to update
      * @return true if update was successful, false otherwise
      */
     @Override
     public boolean updateUser(User user) {
         return super.updateUser(user);
-    }
-
-    /**
-     * Updates this doctor's information in the database.
-     * 
-     * @return true if update was successful, false otherwise
-     */
-    @Override
-    public boolean updateUser() {
-        return super.updateUser(this);
     }
 }

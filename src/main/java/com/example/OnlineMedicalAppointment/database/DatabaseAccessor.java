@@ -98,7 +98,7 @@ public abstract class DatabaseAccessor {
                 while (rs.next()) {
                     Message message = new Message(
                         rs.getInt("messageId"),
-                        rs.getInt("roomID"),
+                        rs.getString("roomID"),
                         rs.getInt("senderId"),
                         rs.getInt("receiverId"),
                         rs.getString("messageText"),
@@ -348,7 +348,7 @@ public abstract class DatabaseAccessor {
         String sql = "INSERT INTO Messages (roomID, senderId, receiverId, messageText, timestamp) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, message.getRoomID());
+            pstmt.setString(1, message.getRoomID());
             pstmt.setInt(2, message.getSenderId());
             pstmt.setInt(3, message.getReceiverId());
             pstmt.setString(4, message.getMessage());
@@ -370,7 +370,7 @@ public abstract class DatabaseAccessor {
         String sql = "UPDATE Messages SET roomID = ?, senderId = ?, receiverId = ?, messageText = ?, timestamp = ? WHERE messageID = ?";
         try (Connection conn = DatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, message.getRoomID());
+            pstmt.setString(1, message.getRoomID());
             pstmt.setInt(2, message.getSenderId());
             pstmt.setInt(3, message.getReceiverId());
             pstmt.setString(4, message.getMessage());

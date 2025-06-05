@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 /**
  * Represents an appointment in the Online Medical Appointment system.
+ * Stores appointment details such as patient, doctor, time, and status.
  */
 public class Appointment {
 
@@ -105,6 +106,10 @@ public class Appointment {
             this.doctorID = doctorID;
         }
 
+        /**
+         * Gets the doctor's full name.
+         * @return the doctor's full name
+         */
         public String getDoctorName() {
             User doctor = DatabaseAccessor.getUserByID(doctorID);
             return doctor.getFName() + " " + doctor.getLName();

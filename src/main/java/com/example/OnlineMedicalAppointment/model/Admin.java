@@ -4,6 +4,7 @@ import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 
 /**
  * Represents an Admin user in the Online Medical Appointment system.
+ * Provides admin-specific functionality and user information.
  * Extends DatabaseAccessor and implements User interface.
  */
 public class Admin extends DatabaseAccessor implements User {
@@ -194,6 +195,22 @@ public class Admin extends DatabaseAccessor implements User {
     }
 
     /**
+     * Deletes the user from the database.
+     * @return true if deletion was successful, false otherwise
+     */
+    @Override
+    public boolean deleteUser() {        
+        return super.deleteUser(this.adminID);
+    }
+    /**
+     * Updates the user information in the database.
+     * @return true if update was successful, false otherwise
+     */
+    @Override
+    public boolean updateUser() {
+        return super.updateUser(this);
+    }
+    /**
      * Updates the user information in the database.
      * @param user The user to update
      * @return true if update was successful, false otherwise
@@ -202,23 +219,5 @@ public class Admin extends DatabaseAccessor implements User {
     public boolean updateUser(User user) {
         
         return super.updateUser(user);
-    }
-
-    /**
-     * Updates this admin's information in the database.
-     * @return true if update was successful, false otherwise
-     */
-    @Override
-    public boolean updateUser() {
-        return super.updateUser(this);
-    }
-
-    /**
-     * Deletes this admin from the database.
-     * @return true if deletion was successful, false otherwise
-     */
-    @Override
-    public boolean deleteUser() {        
-        return super.deleteUser(this.adminID);
     }
 }

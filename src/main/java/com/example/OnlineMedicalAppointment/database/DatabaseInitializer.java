@@ -34,6 +34,7 @@ public class DatabaseInitializer {
             String createMessagesTableSQL = "CREATE TABLE IF NOT EXISTS Messages (" +
                     "messageID INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "senderID INTEGER NOT NULL," +
+                    "roomID STRING NOT NULL," +
                     "receiverID INTEGER NOT NULL," +
                     "messageText TEXT NOT NULL," +
                     "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP," +

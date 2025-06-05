@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Optional;
 import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 
+/**
+ * GeminiClient integrates with Google GenAI to provide chat and function-calling capabilities.
+ * It manages chat context, history, and automatic function calling for the Online Medical Appointment system.
+ */
 public class GeminiClient {
     private final Client client = Client.builder()
             .apiKey("AIzaSyCz4P3Ywm2e_7AG8Z67Phr7GVMUaW7D8-w")
@@ -19,6 +23,9 @@ public class GeminiClient {
     private final GenerateContentConfig config;
     private final List<String> chatHistory = new ArrayList<>();
 
+    /**
+     * Constructs a GeminiClient, registering function-calling methods and initializing configuration.
+     */
     public GeminiClient() {
         try {
             Class<?> dbClass = DatabaseAccessor.class;
@@ -44,7 +51,11 @@ public class GeminiClient {
         }
     }
 
-    // Stores chat history, manages context, and uses autofunctioncalling
+    /**
+     * Generates a response from Gemini based on the prompt, manages chat context, and supports function calling.
+     * @param prompt The user's message or question.
+     * @return The assistant's response, possibly including function call results.
+     */
     public String generateContent(String prompt) {
         chatHistory.add("User: " + prompt);
         GenerateContentResponse response = client.models.generateContent(
@@ -65,6 +76,10 @@ public class GeminiClient {
         return sb.toString();
     }
 
+    /**
+     * Returns the chat history for the current session.
+     * @return List of chat exchanges (user and assistant).
+     */
     public List<String> getChatHistory() {
         return new ArrayList<>(chatHistory);
     }

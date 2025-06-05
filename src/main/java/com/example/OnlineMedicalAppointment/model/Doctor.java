@@ -4,7 +4,7 @@ import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 
 /**
  * Represents a Doctor user in the Online Medical Appointment system.
- * Extends DatabaseAccessor and implements User interface.
+ * Stores doctor-specific information and provides doctor-related functionality.
  */
 public class Doctor extends DatabaseAccessor implements User {
 
@@ -118,16 +118,15 @@ public class Doctor extends DatabaseAccessor implements User {
      * {@inheritDoc}
      */
     @Override
-    public void setPassword(String password) {
-        this.password = password;
+    public String getPassword() {
+        return password;
     }
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getPassword() {
-        return password;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     /**
@@ -141,20 +140,13 @@ public class Doctor extends DatabaseAccessor implements User {
      * {@inheritDoc}
      */
     @Override
-    public void setSpecialty(String specialty) {
-        this.specialty = specialty;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void setUserType(String userType) {
         this.userType = userType;
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the specialty of the doctor.
+     * @return the specialty
      */
     @Override
     public String getSpecialty() {
@@ -162,7 +154,17 @@ public class Doctor extends DatabaseAccessor implements User {
     }
 
     /**
-     * {@inheritDoc}
+     * Sets the specialty of the doctor.
+     * @param specialty the specialty
+     */
+    @Override
+    public void setSpecialty(String specialty) {
+        this.specialty = specialty;
+    }
+
+    /**
+     * Gets the phone number of the doctor.
+     * @return the phone number
      */
     @Override
     public String getPhoneNumber() {
@@ -170,7 +172,8 @@ public class Doctor extends DatabaseAccessor implements User {
     }
 
     /**
-     * {@inheritDoc}
+     * Sets the phone number of the doctor.
+     * @param phoneNumber the phone number
      */
     @Override
     public void setPhoneNumber(String phoneNumber) {
@@ -198,10 +201,8 @@ public class Doctor extends DatabaseAccessor implements User {
     public boolean updateUser() {
         return super.updateUser(this);
     }
-
     /**
-     * Deletes this doctor from the database.
-     * 
+     * Deletes the user from the database.
      * @return true if deletion was successful, false otherwise
      */
     @Override
