@@ -1,8 +1,9 @@
 package com.example.OnlineMedicalAppointment.model;
 
-import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 import java.time.Instant;
 import java.time.LocalDateTime;
+
+import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 
 /**
  * Represents an appointment in the Online Medical Appointment system.
@@ -56,6 +57,20 @@ public class Appointment {
             this.doctorID = doctorID;
             this.appointmentTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(appointmentTime), java.time.ZoneOffset.systemDefault());
             this.status = status;
+        }
+        
+        /**
+         * Constructs an Appointment with patient, doctor, and time.
+         * @param patientID patient ID
+         * @param doctorID doctor ID
+         * @param appointmentTime appointment time
+         * This constructor sets the status to "Pending".
+         */
+        public Appointment(int patientID, int doctorID, LocalDateTime appointmentTime ){
+            this.patientID = patientID;
+            this.doctorID = doctorID;
+            this.appointmentTime = appointmentTime;
+            this.status = "Pending"; 
         }
 
         /**

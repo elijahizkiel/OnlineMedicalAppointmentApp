@@ -82,6 +82,103 @@ public abstract class DatabaseAccessor {
         }
         return doctors;
     }
+    /**
+     * Retrieves a list of doctors by name (first or last).
+     * @param name the name to search for
+     * @return list of doctors matching the name
+     */
+    public static List<Doctor> getDoctorsByName(String name) {
+        String sql = "SELECT * FROM users_table WHERE userType = 'Doctor' AND (FName LIKE ? OR LName LIKE ?)";
+        List<Doctor> doctors = new ArrayList<>();
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, "%" + name + "%");
+            pstmt.setString(2, "%" + name + "%");
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Doctor doctor = new Doctor(
+                        rs.getInt("userID"),
+                        rs.getString("FName"),
+                        rs.getString("LName"),
+                        rs.getString("username"),
+                        rs.getString("userType"),
+                        rs.getString("specialty"),
+                        rs.getString("phoneNumber")
+                    );
+                    doctors.add(doctor);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL Exception thrown while getting doctors by name: " + e.getMessage());
+        }
+        return doctors;
+    }
+
+    /**
+     * Retrieves a list of doctors by name and specialty.
+     * @param name the name to search for
+     * @param specialty the specialty to filter by
+     * @return list of doctors matching the name and specialty
+     */
+    public static List<Doctor> getDoctorsByNameAndSpecialty(String name, String specialty) {
+        String sql = "SELECT * FROM users_table WHERE userType = 'Doctor' AND (FName LIKE ? OR LName LIKE ?) AND specialty = ?";
+        List<Doctor> doctors = new ArrayList<>();
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, "%" + name + "%");
+            pstmt.setString(2, "%" + name + "%");
+            pstmt.setString(3, specialty);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Doctor doctor = new Doctor(
+                        rs.getInt("userID"),
+                        rs.getString("FName"),
+                        rs.getString("LName"),
+                        rs.getString("username"),
+                        rs.getString("userType"),
+                        rs.getString("specialty"),
+                        rs.getString("phoneNumber")
+                    );
+                    doctors.add(doctor);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL Exception thrown while getting doctors by name and specialty: " + e.getMessage());
+        }
+        return doctors;
+    }
+
+    /**
+     * Retrieves a doctor by name and specialty.
+     * @param name the name to search for
+     * @param specialty the specialty to filter by
+     * @return the Doctor object if found, null otherwise
+     */
+    public static Doctor getDoctorByNameAndSpecialty(String name, String specialty) {
+        String sql = "SELECT * FROM users_table WHERE userType = 'Doctor' AND (FName = ? OR LName = ?) AND specialty = ?";
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            pstmt.setString(2, name);
+            pstmt.setString(3, specialty);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Doctor(
+                        rs.getInt("userID"),
+                        rs.getString("FName"),
+                        rs.getString("LName"),
+                        rs.getString("username"),
+                        rs.getString("userType"),
+                        rs.getString("specialty"),
+                        rs.getString("phoneNumber")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL Exception thrown while getting doctor by name and specialty: " + e.getMessage());
+        }
+        return null; // Return null if no doctor found
+    }
 
     /**
      * Retrieves all messages for a given chat room.
