@@ -21,7 +21,6 @@ import javax.swing.SwingConstants;
 import com.example.OnlineMedicalAppointment.AuthService;
 import com.example.OnlineMedicalAppointment.database.DatabaseConnector;
 import com.example.OnlineMedicalAppointment.model.User;
-import com.example.OnlineMedicalAppointment.ui.StyleConstants;
 
 /**
  * Frame for user login.

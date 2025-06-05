@@ -43,21 +43,22 @@ public class AuthService {
                                     rs.getString("phoneNumber"));
                     case "Doctor":
                         System.out.println("Doctor logged in");
-                        return new Doctor(rs.getInt("userID"),
-                                    rs.getString("FName"),
-                                    rs.getString("LName"),
-                                    rs.getString("username"),
-                                    rs.getString("password"),
-                                    rs.getString("userType"),
-                                    rs.getString("specialty"),
-                                    rs.getString("phoneNumber"));
+                        return new Doctor(
+                            rs.getInt("userID"),
+                            rs.getString("FName"),
+                            rs.getString("LName"),
+                            rs.getString("username"),
+                            rs.getString("password"),
+                            rs.getString("userType"),
+                            rs.getString("specialty"),
+                            rs.getString("phoneNumber")
+                        );
                     case "Patient":
                         System.out.println("Patient logged in");
                         return new Patient(rs.getInt("userID"),
                                     rs.getString("FName"),
                                     rs.getString("LName"),
                                     rs.getString("username"),
-                                    
                                     rs.getString("password"),
                                     rs.getString("phoneNumber"));
                     default:

@@ -13,7 +13,7 @@ public class Admin extends DatabaseAccessor implements User {
     private String LName;
     private String username;
     private String password;
-    private String userType = "Admin";
+    private String userType;
     private String specialty;
     private String phoneNumber;
 
@@ -52,6 +52,7 @@ public class Admin extends DatabaseAccessor implements User {
         this.FName = FName;
         this.LName = LName;
         this.username = username;
+        this.userType = "Admin"; // Default userType for Admin
         this.password = password;
         this.phoneNumber = phoneNumber;
     }
@@ -69,6 +70,7 @@ public class Admin extends DatabaseAccessor implements User {
         this.FName = FName;
         this.LName = LName;
         this.username = username;
+        this.userType = "Admin"; // Default userType for Admin
         this.phoneNumber = phoneNumber;
     }
 

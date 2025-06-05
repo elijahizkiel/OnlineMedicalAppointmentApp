@@ -3,6 +3,7 @@ package com.example.OnlineMedicalAppointment.database;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -749,7 +750,8 @@ public abstract class DatabaseAccessor {
     }
     public static Map<String, Integer> getAppointmentsByMonth() {
         Map<String, Integer> result = new HashMap<>();
-        String sql = "SELECT strftime('%Y-%m', appointmentTime) as month, COUNT(*) as count FROM Schedules GROUP BY month ORDER BY month DESC";
+        String sql = "SELECT strftime('%Y-%m', appointmentTime) as month, COUNT(*) as count " +
+                     "FROM Schedules GROUP BY month ORDER BY month DESC";
         try (Connection conn = DatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql);
              ResultSet rs = pstmt.executeQuery()) {
@@ -795,4 +797,124 @@ public abstract class DatabaseAccessor {
         }
         return result;
             }
+    
+    // Admin Dashboard Methods
+    
+    /**
+     * Gets total appointments grouped by status
+     */
+    public static List<Object[]> getTotalAppointmentsByStatus() {
+        String sql = "SELECT status, COUNT(*) as count FROM Schedules GROUP BY status";
+        return executeQuery(sql);
+    }
+    
+    /**
+     * Gets top doctors by appointment status
+     * @param status Appointment status to filter by
+     * @param limit Number of results to return
+     */
+    public static List<Object[]> getTopDoctorsByAppointmentStatus(String status, int limit) {
+        String sql = "SELECT d.FName || ' ' || d.LName as doctorName, COUNT(*) as count " +
+                     "FROM Schedules s " +
+                     "JOIN users_table d ON s.doctorID = d.userID " +
+                     "WHERE s.status = ? " +
+                     "GROUP BY doctorName ORDER BY count DESC LIMIT ?";
+        return executeQuery(sql, status, limit);
+    }
+    
+    /**
+     * Gets daily appointment counts
+     * @param days Number of past days to include
+     */
+    public static List<Object[]> getDailyAppointmentsCount(int days) {
+        String sql = "SELECT DATE(appointmentTime) as appointmentDate, COUNT(*) as count " +
+                     "FROM Schedules " +
+                     "WHERE appointmentTime >= DATE('now', '-' || ? || ' days') " +
+                     "GROUP BY appointmentDate ORDER BY appointmentDate ASC";
+        return executeQuery(sql, days);
+    }
+    
+    /**
+     * Tracks appointment status changes over time
+     */
+    public static List<Object[]> getAppointmentStatusOverTime() {
+        String sql = "SELECT DATE(appointmentTime) as date, status, COUNT(*) as count " +
+                     "FROM Schedules " +
+                     "GROUP BY date, status ORDER BY date ASC";
+        return executeQuery(sql);
+    }
+
+    /**
+     * Gets appointments made per day
+     * @param days Number of past days to include
+     */
+    public static Map<String, Integer> getAppointmentsMadeByDay(int days) {
+        List<Object[]> results = executeQuery(
+            "SELECT DATE(bookedOn) as date, COUNT(*) as count " +
+            "FROM Schedules " +
+            "WHERE bookedOn >= DATE('now', '-' || ? || ' days') " +
+            "GROUP BY date ORDER BY date ASC", 
+            days
+        );
+        return convertToMap(results);
+    }
+    
+    /**
+     * Gets appointments held per day
+     * @param days Number of past days to include
+     */
+    public static Map<String, Integer> getAppointmentsHeldByDay(int days) {
+        List<Object[]> results = executeQuery(
+            "SELECT DATE(appointmentTime) as date, COUNT(*) as count " +
+            "FROM schedule_table " +
+            "WHERE status = 'Held' " +
+            "AND appointmentTime >= DATE('now', '-' || ? || ' days') " +
+            "GROUP BY date ORDER BY date ASC", 
+            days
+        );
+        return convertToMap(results);
+    }
+    
+    /**
+     * Converts query results to Map<String, Integer>
+     */
+    private static Map<String, Integer> convertToMap(List<Object[]> results) {
+        Map<String, Integer> map = new HashMap<>();
+        for (Object[] row : results) {
+            if (row.length >= 2) {
+                String date = row[0].toString();
+                int count = ((Number) row[1]).intValue();
+                map.put(date, count);
+            }
+        }
+        return map;
+    }
+    // Helper method to execute queries and return results
+    private static List<Object[]> executeQuery(String sql, Object... params) {
+        List<Object[]> results = new ArrayList<>();
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            // Set parameters
+            for (int i = 0; i < params.length; i++) {
+                pstmt.setObject(i + 1, params[i]);
+            }
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                ResultSetMetaData metaData = rs.getMetaData();
+                int columnCount = metaData.getColumnCount();
+                
+                while (rs.next()) {
+                    Object[] row = new Object[columnCount];
+                    for (int i = 1; i <= columnCount; i++) {
+                        row[i - 1] = rs.getObject(i);
+                    }
+                    results.add(row);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return results;
+    }
 }    

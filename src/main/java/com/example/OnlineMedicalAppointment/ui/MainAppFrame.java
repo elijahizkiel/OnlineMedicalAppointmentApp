@@ -1,12 +1,20 @@
 package com.example.OnlineMedicalAppointment.ui;
 
-import com.example.OnlineMedicalAppointment.model.User;
-import com.example.OnlineMedicalAppointment.model.Doctor;
-import com.example.OnlineMedicalAppointment.model.Patient;  
-// import com.example.OnlineMedicalAppointment.model.Admin;    
+import java.awt.BorderLayout;    
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.Box;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+
+import com.example.OnlineMedicalAppointment.model.Admin;
+import com.example.OnlineMedicalAppointment.model.Doctor;
+import com.example.OnlineMedicalAppointment.model.Patient;
+import com.example.OnlineMedicalAppointment.model.User;
 
 /**
  * The main application frame for the Online Medical Appointment system.
@@ -34,7 +42,7 @@ public class MainAppFrame extends JFrame {
             this.currentUser = (Patient) user;
             break;
             case "Admin":
-            // this.currentUser = (Admin) user;
+            this.currentUser = (Admin) user;
             break;
             default:
             // Handle unknown user type, maybe throw an exception or log a warning
@@ -75,6 +83,7 @@ public class MainAppFrame extends JFrame {
             case "Doctor": {
                 tabbedPane.addTab("Home", new DoctorHomePanel(currentUser));
                 tabbedPane.addTab("Schedule", new DoctorSchedulePanel(currentUser));
+                tabbedPane.addTab("Chat-Room", new DoctorChatPanel(currentUser));
                 break;
             }
             case "Admin":

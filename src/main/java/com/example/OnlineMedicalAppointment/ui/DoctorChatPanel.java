@@ -23,8 +23,6 @@ import com.example.OnlineMedicalAppointment.model.User;
 import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 import com.example.OnlineMedicalAppointment.model.ChatRoom;
 import com.example.OnlineMedicalAppointment.model.Message;
-import com.example.OnlineMedicalAppointment.ui.StyleConstants;
-
 public class DoctorChatPanel extends JPanel {
 
     private final User currentUser;

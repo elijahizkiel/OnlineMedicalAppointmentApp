@@ -16,7 +16,7 @@ public class StyleConstants {
     
     // Fonts
     public static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 24);
-    public static final Font SUBTITLE_FONT = new Font("Segoe UI", Font.BOLD, 18);
+    public static final Font SUBTITLE_FONT = new Font("SansSerif", Font.BOLD, 16);
     public static final Font NORMAL_FONT = new Font("Segoe UI", Font.PLAIN, 14);
     public static final Font BUTTON_FONT = new Font("Segoe UI", Font.BOLD, 14);
     
@@ -24,6 +24,10 @@ public class StyleConstants {
     public static final Border INPUT_BORDER = BorderFactory.createCompoundBorder(
         BorderFactory.createLineBorder(SECONDARY_COLOR, 1),
         BorderFactory.createEmptyBorder(5, 10, 5, 10)
+    );
+    public static final Border CARD_BORDER = BorderFactory.createCompoundBorder(
+        BorderFactory.createLineBorder(SECONDARY_COLOR, 1),
+        BorderFactory.createEmptyBorder(15, 15, 15, 15)
     );
     
     public static Border createRoundedBorder() {
