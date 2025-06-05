@@ -45,17 +45,10 @@ public class PatientBookingPanel extends JPanel {
         @Override
         public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            switch (value) {
-                case Doctor doctor -> {
-                    setText(doctor.getFName() + " " + doctor.getLName() + " (" + doctor.getSpecialty() + ")");
-                }
-                case String text -> {
-                    setText(text);
-                }
-                default -> {
-                    // Default rendering for other types
-                    super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                }
+            if (value instanceof Doctor doctor) {
+                setText(doctor.getFName() + " " + doctor.getLName() + " (" + doctor.getSpecialty() + ")");
+            } else if (value instanceof String text) {
+                setText(text);
             }
             return this;
         }
@@ -133,15 +126,15 @@ public class PatientBookingPanel extends JPanel {
         JPanel bookingControlsPanel = new JPanel();
         bookingControlsPanel.setLayout(new BoxLayout(bookingControlsPanel, BoxLayout.X_AXIS));
 
+        // Create and configure DatePickerSettings
         DatePickerSettings dateSettings = new DatePickerSettings();
         dateSettings.setHighlightPolicy(new TodayHighlightPolicy());
 
-        // Fetch existing appointments for the current user
+        // Fetch existing appointments for the current user and set veto policy
         List<Appointment> userAppointments = DatabaseAccessor.getAppointments(currentUser.getUserID());
-        datePicker = new DatePicker(dateSettings);
-        datePicker.setDateToToday();
-        // Set the veto policy AFTER constructing the DatePicker
         dateSettings.setVetoPolicy(new OccupiedDateVetoPolicy(userAppointments));
+
+        // Initialize DatePicker with fully configured settings
         datePicker = new DatePicker(dateSettings);
         datePicker.setDateToToday();
 
@@ -268,9 +261,9 @@ public class PatientBookingPanel extends JPanel {
         List<LocalDateTime> occupiedAppointments = new java.util.ArrayList<>();
         if (doctorAppointments != null) {
             for (Appointment appt : doctorAppointments) {
-            if (appt.getAppointmentTime() != null) {
-                occupiedAppointments.add(appt.getAppointmentTime());
-            }
+                if (appt.getAppointmentTime() != null) {
+                    occupiedAppointments.add(appt.getAppointmentTime());
+                }
             }
         }
         List<String> allSlots = getAllTimeSlots();
@@ -278,14 +271,12 @@ public class PatientBookingPanel extends JPanel {
         for (String slot : allSlots) {
             String startTimeString = slot.split(" - ")[0];
             java.time.LocalTime slotStartTime = java.time.LocalTime.parse(startTimeString);
-            // LocalDateTime slotDateTime = LocalDateTime.of(selectedDate, slotStartTime);
             boolean isOccupied = false;
-                for (LocalDateTime occupiedTime : occupiedAppointments) {
-                    if (occupiedTime.toLocalTime().equals(slotStartTime)) {
-                        isOccupied = true;
-                        break;
-                    }
-                
+            for (LocalDateTime occupiedTime : occupiedAppointments) {
+                if (occupiedTime.toLocalDate().equals(selectedDate) && occupiedTime.toLocalTime().equals(slotStartTime)) {
+                    isOccupied = true;
+                    break;
+                }
             }
             if (!isOccupied) {
                 timePickerComboBox.addItem(slot);

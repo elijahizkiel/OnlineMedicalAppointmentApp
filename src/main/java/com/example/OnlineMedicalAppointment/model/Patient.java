@@ -238,4 +238,18 @@ public class Patient extends  DatabaseAccessor implements User{
     public boolean updateUser(User user) {
         return super.updateUser(user);
     }
+
+    @Override
+    public String toString() {
+        return "Patient{" +
+                "userID=" + userID +
+                ", FName='" + FName + '\'' +
+                ", LName='" + LName + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", userType='" + userType + '\'' +
+                ", specialty='" + specialty + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                '}';
+    }
 }

@@ -228,7 +228,7 @@ public abstract class DatabaseAccessor {
      * @return list of appointments
      */
     public static List<Appointment> getAppointments(int userId){
-        String sql = "SELECT * FROM appointments WHERE doctorID = ? OR patientID = ?";
+        String sql = "SELECT * FROM Schedules WHERE doctorID = ? OR patientID = ?";
 
         List<Appointment> appointments = new ArrayList<>();
         try (Connection conn = DatabaseConnector.getConnection();
@@ -301,6 +301,25 @@ public abstract class DatabaseAccessor {
         }
     }
     
+    /**
+     * 
+     * @param type
+     * @return
+     */
+    public static int getUsersCountByType(String type){
+        String sql = "SELECT COUNT(*) FROM users_table WHERE userType = ?";
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, type);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving user count by type: " + e.getMessage());
+        }
+        return 0;
+    }
     /**
      * Updates a user in the database.
      * @param user the user to update
@@ -587,5 +606,32 @@ public abstract class DatabaseAccessor {
                     return false;
                 }
             }
-        }    
+    /**
+     * Retrieves a list of all appointments.
+     * @return list of all appointments
+     */
+    public static List<Appointment> getAllAppointments(){
+        String sql = "SELECT * FROM Schedules "; // Changed table name to 'appointments' for consistency    
+        List<Appointment> appointments = new ArrayList<>();
+        try (Connection conn = DatabaseConnector.getConnection(); 
+            PreparedStatement stmt = conn.prepareStatement(sql); 
+            ResultSet rs = stmt.executeQuery()){ // Execute the query
+            
+               while (rs.next()) { // Iterate through the results
+                  Appointment appointment =  new Appointment(
+                        rs.getInt("scheduleID"),
+                        rs.getInt("patientID"),
+                        rs.getInt("doctorID"),
+                        rs.getLong("appointmentTime"), // Assuming appointmentTime is stored as a long (timestamp)
+                        rs.getString("status")
+                        );
+                  appointments.add(appointment);
+               }
+        } catch (SQLException e) {
+            System.out.println("SQL Exception thrown while getting all appointments: " + e.getMessage());
+            return new ArrayList<>(); 
+        }
+        return appointments;
+    }
+}    
 

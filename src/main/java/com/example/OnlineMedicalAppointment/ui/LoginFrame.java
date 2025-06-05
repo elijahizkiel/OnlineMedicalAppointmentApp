@@ -78,6 +78,7 @@ public class LoginFrame extends JFrame {
                     // Get user details from database
                     User user = AuthService.login(username, password); 
                     
+                    System.out.println(user.toString()); // Ensure user object is created
                     // Redirect to appropriate dashboard based on user type
                     MainAppFrame mainAppFrame = new MainAppFrame(user);
                     mainAppFrame.setVisible(true);
