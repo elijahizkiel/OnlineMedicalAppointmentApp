@@ -127,6 +127,17 @@ For questions or support, please open an issue in the repository.
 
 ---
 
+## UML Diagram Key
+
+- `+` : Public property or method
+- `-` : Private property or method
+- `<|..` : Realization (implements interface)
+- `<|--` : Inheritance (extends class)
+- `--o` : Association ("has a" relationship)
+- `..>` : Dependency (uses)
+
+---
+
 ## UML Class Diagram
 
 Below is a UML class diagram representing the main classes and their relationships in the system, including private properties (marked with -):

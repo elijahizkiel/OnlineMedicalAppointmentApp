@@ -275,16 +275,22 @@ public class PatientBookingPanel extends JPanel {
 
         // Doctor search button action
         searchButton.addActionListener(e -> {
-            String query = searchField.getText().trim();
+            String searchText = searchField.getText().trim();
             doctorListModel.clear();
-            List<Doctor> queriedDoctors = DatabaseAccessor.getDoctorsByNameOrSpecialty(query);
-            if (!queriedDoctors.isEmpty()) {
-                System.out.println("Doctors found: " + queriedDoctors.size());
-                for (Doctor doctor : queriedDoctors) {
-                    doctorListModel.addElement(doctor);
-                }
+            
+            if (searchText.isEmpty()) {
+                doctorListModel.addElement("Please enter a search term");
+                return;
+            }
+            
+            List<Doctor> foundDoctors = DatabaseAccessor.searchDoctors(searchText);
+            
+            if (foundDoctors.isEmpty()) {
+                doctorListModel.addElement("No doctors found matching: " + searchText);
             } else {
-                doctorListModel.addElement("No doctors found");
+                for (Doctor doc : foundDoctors) {
+                    doctorListModel.addElement(doc);
+                }
             }
         });
 

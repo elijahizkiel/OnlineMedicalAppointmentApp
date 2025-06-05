@@ -3,6 +3,8 @@ package com.example.OnlineMedicalAppointment.ui;
 import java.awt.BorderLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.util.List;
 
 import javax.swing.JLabel;
@@ -13,13 +15,14 @@ import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JButton;
 import javax.swing.BoxLayout;
+import javax.swing.JOptionPane;
 
 import com.example.OnlineMedicalAppointment.model.User;
 import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 import com.example.OnlineMedicalAppointment.model.ChatRoom;
 import com.example.OnlineMedicalAppointment.model.Message;
-import com.example.OnlineMedicalAppointment.ui.StyleConstants;
 
 public class PatientChatPanel extends JPanel {
 
@@ -91,11 +94,28 @@ public class PatientChatPanel extends JPanel {
         messagesScrollPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         messagePanel.add(messagesScrollPane, BorderLayout.CENTER);
 
+        // Create input panel for message input and send button
+        JPanel inputPanel = new JPanel(new BorderLayout());
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
         // Create text field for writing messages
         messageInputField = new JTextField(30);
         messageInputField.setFont(StyleConstants.NORMAL_FONT);
         messageInputField.setBorder(BorderFactory.createTitledBorder("Write a message"));
-        messagePanel.add(messageInputField, BorderLayout.SOUTH);
+        inputPanel.add(messageInputField, BorderLayout.CENTER);
+
+        // Create send button
+        JButton sendButton = new JButton("Send");
+        sendButton.setFont(StyleConstants.NORMAL_FONT);
+        sendButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sendMessage();
+            }
+        });
+        inputPanel.add(sendButton, BorderLayout.EAST);
+
+        messagePanel.add(inputPanel, BorderLayout.SOUTH);
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chatListPanel, messagePanel);
         splitPane.setResizeWeight(0.3); // Give 30% to the left side (chat list)
@@ -119,6 +139,37 @@ public class PatientChatPanel extends JPanel {
                 message.getSenderName(), 
                 message.getMessage());
             messagesDisplayArea.append(messageText);
+        }
+    }
+
+    private void sendMessage() {
+        if (selectedChatRoom == null) {
+            JOptionPane.showMessageDialog(this, "Please select a chat room first.", "No Chat Room Selected", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String messageText = messageInputField.getText().trim();
+        if (messageText.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter a message.", "Empty Message", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Create and send the message
+        Message newMessage = new Message(
+            null, // id will be set by database
+            currentUser.getUserID(), 
+            selectedChatRoom.getChattingWith().getUserID(), 
+            String.valueOf(selectedChatRoom.getChatRoomID()),
+            currentUser.getFName() + " " + currentUser.getLName(),
+            selectedChatRoom.getChattingWith().getFName() + " " + selectedChatRoom.getChattingWith().getLName(),
+            messageText
+        );
+        
+        if (DatabaseAccessor.addMessage(newMessage)) {
+            messageInputField.setText(""); // Clear the input field
+            updateMessagesPanel(selectedChatRoom); // Refresh messages
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to send message. Please try again.", "Send Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

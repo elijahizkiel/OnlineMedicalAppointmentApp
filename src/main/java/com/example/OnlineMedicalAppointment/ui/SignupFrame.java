@@ -2,14 +2,26 @@ package com.example.OnlineMedicalAppointment.ui;
 
 // import com.example.OnlineMedicalAppointment.database.DatabaseConnector;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 import com.example.OnlineMedicalAppointment.model.Doctor;
-import com.example.OnlineMedicalAppointment.model.User;
 import com.example.OnlineMedicalAppointment.model.Patient;
+import com.example.OnlineMedicalAppointment.model.User;
 
 public class SignupFrame extends JFrame {
 
@@ -38,51 +50,59 @@ public class SignupFrame extends JFrame {
         titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
         add(titleLabel, BorderLayout.NORTH);
 
+        // Subtitle
+        JLabel subtitleLabel = StyleConstants.createLabel("Please fill in your details to create an account.", StyleConstants.SUBTITLE_FONT);
+        subtitleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        subtitleLabel.setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
+        add(subtitleLabel, BorderLayout.BEFORE_FIRST_LINE);
+
         // Input Panel
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new GridLayout(9, 2, 10, 10));
-        inputPanel.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
+        inputPanel.setBorder(StyleConstants.createRoundedBorder());
         inputPanel.setBackground(StyleConstants.LIGHT_BG);
 
         JLabel firstNameLabel = StyleConstants.createLabel("First Name:", StyleConstants.NORMAL_FONT);
         firstNameField = new JTextField();
-        firstNameField.setBorder(StyleConstants.INPUT_BORDER);
-        firstNameField.setBackground(StyleConstants.WHITE);
+        StyleConstants.styleTextField(firstNameField);
+        firstNameField.setToolTipText("Enter your first name");
 
         JLabel lastNameLabel = StyleConstants.createLabel("Last Name:", StyleConstants.NORMAL_FONT);
         lastNameField = new JTextField();
-        lastNameField.setBorder(StyleConstants.INPUT_BORDER);
-        lastNameField.setBackground(StyleConstants.WHITE);
+        StyleConstants.styleTextField(lastNameField);
+        lastNameField.setToolTipText("Enter your last name");
 
         JLabel userTypeLabel = StyleConstants.createLabel("User Type:", StyleConstants.NORMAL_FONT);
         userTypeComboBox = new JComboBox<>(new String[]{"Patient", "Doctor", "Admin"});
+        userTypeComboBox.setFont(StyleConstants.NORMAL_FONT);
         userTypeComboBox.setBorder(StyleConstants.INPUT_BORDER);
         userTypeComboBox.setBackground(StyleConstants.WHITE);
+        userTypeComboBox.setToolTipText("Select your user type");
 
         JLabel usernameLabel = StyleConstants.createLabel("Username:", StyleConstants.NORMAL_FONT);
         usernameField = new JTextField();
-        usernameField.setBorder(StyleConstants.INPUT_BORDER);
-        usernameField.setBackground(StyleConstants.WHITE);
+        StyleConstants.styleTextField(usernameField);
+        usernameField.setToolTipText("Choose a unique username");
 
         JLabel passwordLabel = StyleConstants.createLabel("Password:", StyleConstants.NORMAL_FONT);
         passwordField = new JPasswordField();
-        passwordField.setBorder(StyleConstants.INPUT_BORDER);
-        passwordField.setBackground(StyleConstants.WHITE);
+        StyleConstants.styleTextField(passwordField);
+        passwordField.setToolTipText("Enter your password");
 
         JLabel confirmPasswordLabel = StyleConstants.createLabel("Confirm Password:", StyleConstants.NORMAL_FONT);
         confirmPasswordField = new JPasswordField();
-        confirmPasswordField.setBorder(StyleConstants.INPUT_BORDER);
-        confirmPasswordField.setBackground(StyleConstants.WHITE);
+        StyleConstants.styleTextField(confirmPasswordField);
+        confirmPasswordField.setToolTipText("Re-enter your password");
 
         JLabel specialtyLabel = StyleConstants.createLabel("Specialty (for Doctors):", StyleConstants.NORMAL_FONT);
         specialtyField = new JTextField();
-        specialtyField.setBorder(StyleConstants.INPUT_BORDER);
-        specialtyField.setBackground(StyleConstants.WHITE);
+        StyleConstants.styleTextField(specialtyField);
+        specialtyField.setToolTipText("Enter your specialty if you are a doctor");
 
         JLabel phoneNumberLabel = StyleConstants.createLabel("Phone Number:", StyleConstants.NORMAL_FONT);
         phoneNumberField = new JTextField();
-        phoneNumberField.setBorder(StyleConstants.INPUT_BORDER);
-        phoneNumberField.setBackground(StyleConstants.WHITE);
+        StyleConstants.styleTextField(phoneNumberField);
+        phoneNumberField.setToolTipText("Enter your phone number");
 
         inputPanel.add(firstNameLabel);
         inputPanel.add(firstNameField);
@@ -101,14 +121,26 @@ public class SignupFrame extends JFrame {
         inputPanel.add(phoneNumberLabel);
         inputPanel.add(phoneNumberField);
 
+        // Hide specialty field unless Doctor is selected
+        specialtyLabel.setVisible(false);
+        specialtyField.setVisible(false);
+        userTypeComboBox.addActionListener(e -> {
+            String selected = (String) userTypeComboBox.getSelectedItem();
+            boolean isDoctor = "Doctor".equals(selected);
+            specialtyLabel.setVisible(isDoctor);
+            specialtyField.setVisible(isDoctor);
+        });
+
         // Button Panel
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout());
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 0));
         buttonPanel.setBackground(StyleConstants.LIGHT_BG);
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 20, 10));
 
-        signupButton = new JButton("Sign Up");
-        backToLoginButton = new JButton("Back to Login");
+        signupButton = StyleConstants.createPrimaryButton("Sign Up");
+        backToLoginButton = StyleConstants.createPrimaryButton("Back to Login");
+        backToLoginButton.setBackground(StyleConstants.SECONDARY_COLOR);
+        backToLoginButton.setForeground(StyleConstants.WHITE);
 
         buttonPanel.add(signupButton);
         buttonPanel.add(backToLoginButton);
@@ -116,6 +148,19 @@ public class SignupFrame extends JFrame {
         // Add panels to frame
         add(inputPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
+
+        // Add focus highlight to fields
+        JTextField[] fields = {firstNameField, lastNameField, usernameField, passwordField, confirmPasswordField, specialtyField, phoneNumberField};
+        for (JTextField field : fields) {
+            field.addFocusListener(new java.awt.event.FocusAdapter() {
+                public void focusGained(java.awt.event.FocusEvent evt) {
+                    field.setBackground(new Color(232, 240, 254));
+                }
+                public void focusLost(java.awt.event.FocusEvent evt) {
+                    field.setBackground(StyleConstants.WHITE);
+                }
+            });
+        }
 
         // Button actions
         signupButton.addActionListener(e -> {

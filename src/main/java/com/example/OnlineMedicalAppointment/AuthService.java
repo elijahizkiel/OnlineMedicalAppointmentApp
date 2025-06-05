@@ -5,12 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 import com.example.OnlineMedicalAppointment.database.DatabaseConnector;
-import com.example.OnlineMedicalAppointment.model.User;
+import com.example.OnlineMedicalAppointment.model.Admin;
 import com.example.OnlineMedicalAppointment.model.Doctor;
 import com.example.OnlineMedicalAppointment.model.Patient;
-import com.example.OnlineMedicalAppointment.model.Admin;
-import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
+import com.example.OnlineMedicalAppointment.model.User;
 
 /**
  * Provides authentication and signup services for users.
@@ -39,6 +39,7 @@ public class AuthService {
                                     rs.getString("FName"),
                                     rs.getString("LName"),
                                     rs.getString("username"),
+                                    rs.getString("password"),
                                     rs.getString("phoneNumber"));
                     case "Doctor":
                         System.out.println("Doctor logged in");
@@ -46,22 +47,22 @@ public class AuthService {
                                     rs.getString("FName"),
                                     rs.getString("LName"),
                                     rs.getString("username"),
+                                    rs.getString("password"),
                                     rs.getString("userType"),
                                     rs.getString("specialty"),
                                     rs.getString("phoneNumber"));
-                        
                     case "Patient":
                         System.out.println("Patient logged in");
                         return new Patient(rs.getInt("userID"),
                                     rs.getString("FName"),
                                     rs.getString("LName"),
                                     rs.getString("username"),
+                                    
+                                    rs.getString("password"),
                                     rs.getString("phoneNumber"));
-                        
                     default:
                     System.out.println("Unknown user type");
                 }
-                
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());

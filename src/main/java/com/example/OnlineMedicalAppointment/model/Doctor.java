@@ -49,15 +49,17 @@ public class Doctor extends DatabaseAccessor implements User {
      * @param specialty Specialty
      * @param phoneNumber Phone number
      */
-    public Doctor(int doctorsID, String FName, String LName,  String username, String userType, String specialty, String phoneNumber) {
-        this.doctorsID = doctorsID;
+    public Doctor(int userID, String FName, String LName, String username, String password, String userType, String specialty, String phoneNumber) {
+        this.doctorsID = userID;
         this.FName = FName;
         this.LName = LName;
         this.username = username;
+        this.password = password;
         this.userType = userType;
+        this.phoneNumber = phoneNumber;
         this.specialty = specialty;
-        this.phoneNumber = phoneNumber;    
     }
+
 
     /**
      * {@inheritDoc}

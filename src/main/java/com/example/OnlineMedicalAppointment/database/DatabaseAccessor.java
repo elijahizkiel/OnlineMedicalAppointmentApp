@@ -1,17 +1,19 @@
 package com.example.OnlineMedicalAppointment.database;
 
-import java.util.List;
-import java.util.ArrayList;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import com.example.OnlineMedicalAppointment.model.Appointment;
+import com.example.OnlineMedicalAppointment.model.Doctor;
 import com.example.OnlineMedicalAppointment.model.Message;
 import com.example.OnlineMedicalAppointment.model.Patient;
 import com.example.OnlineMedicalAppointment.model.User;
-import com.example.OnlineMedicalAppointment.model.Doctor;
 
 /**
  * Abstract class providing static methods for database access and manipulation.
@@ -36,6 +38,7 @@ public abstract class DatabaseAccessor {
                         rs.getString("FName"),
                         rs.getString("LName"),
                         rs.getString("username"),
+                        rs.getString("password"),
                         rs.getString("userType"),
                         rs.getString("specialty"),
                         rs.getString("phoneNumber")
@@ -69,6 +72,7 @@ public abstract class DatabaseAccessor {
                         rs.getString("FName"),
                         rs.getString("LName"),
                         rs.getString("username"),
+                        rs.getString("password"),
                         rs.getString("userType"),
                         rs.getString("specialty"),
                         rs.getString("phoneNumber")
@@ -101,6 +105,7 @@ public abstract class DatabaseAccessor {
                         rs.getString("FName"),
                         rs.getString("LName"),
                         rs.getString("username"),
+                        rs.getString("password"),
                         rs.getString("userType"),
                         rs.getString("specialty"),
                         rs.getString("phoneNumber")
@@ -135,6 +140,7 @@ public abstract class DatabaseAccessor {
                         rs.getString("FName"),
                         rs.getString("LName"),
                         rs.getString("username"),
+                        rs.getString("password"),
                         rs.getString("userType"),
                         rs.getString("specialty"),
                         rs.getString("phoneNumber")
@@ -168,6 +174,7 @@ public abstract class DatabaseAccessor {
                         rs.getString("FName"),
                         rs.getString("LName"),
                         rs.getString("username"),
+                        rs.getString("password"),
                         rs.getString("userType"),
                         rs.getString("specialty"),
                         rs.getString("phoneNumber")
@@ -182,6 +189,87 @@ public abstract class DatabaseAccessor {
         return doctors;
     }
 
+    /**
+     * Searches for doctors based on a query string that can match name or specialty.
+     * Uses partial matching for more flexible search results and ranks results based on match quality.
+     * @param query The search query for name or specialty
+     * @return List of matching doctors sorted by relevance
+     */
+    public static List<Doctor> searchDoctors(String query) {
+        String sql = "SELECT *, " +
+            "CASE " +
+            "    WHEN FName LIKE ? OR LName LIKE ? THEN 3 " +
+            "    WHEN specialty LIKE ? THEN 2 " +
+            "    ELSE 1 " +
+            "END as relevance " +
+            "FROM users_table " +
+            "WHERE userType = 'Doctor' " +
+            "AND (FName LIKE ? OR LName LIKE ? OR specialty LIKE ?) " +
+            "ORDER BY relevance DESC, FName ASC";
+        
+        List<Doctor> doctors = new ArrayList<>();
+        String searchPattern = "%" + query + "%";
+        
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            // Set parameters for relevance check
+            pstmt.setString(1, query);
+            pstmt.setString(2, query);
+            pstmt.setString(3, query);
+            // Set parameters for actual search
+            pstmt.setString(4, searchPattern);
+            pstmt.setString(5, searchPattern);
+            pstmt.setString(6, searchPattern);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Doctor doctor = new Doctor(
+                        rs.getInt("userID"),
+                        rs.getString("FName"),
+                        rs.getString("LName"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("userType"),
+                        rs.getString("specialty"),
+                        rs.getString("phoneNumber")
+                    );
+                    doctors.add(doctor);
+                    System.out.println("Doctor found: " + doctor.getFName() + " " + doctor.getLName() + ", Relevance: " + rs.getInt("relevance"));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("SQL Exception thrown while searching doctors: " + e.getMessage());
+        }
+        return doctors;
+    }
+
+    /**
+     * Retrieves a list of all appointments.
+     * @return list of all appointments
+     */
+    public static List<Appointment> getAllAppointments(){
+        String sql = "SELECT * FROM Schedules "; // Changed table name to 'appointments' for consistency    
+        List<Appointment> appointments = new ArrayList<>();
+        try (Connection conn = DatabaseConnector.getConnection(); 
+            PreparedStatement stmt = conn.prepareStatement(sql); 
+            ResultSet rs = stmt.executeQuery()){ // Execute the query
+            
+               while (rs.next()) { // Iterate through the results
+                  Appointment appointment =  new Appointment(
+                        rs.getInt("scheduleID"),
+                        rs.getInt("patientID"),
+                        rs.getInt("doctorID"),
+                        rs.getLong("appointmentTime"), // Assuming appointmentTime is stored as a long (timestamp)
+                        rs.getString("status")
+                        );
+                  appointments.add(appointment);
+               }
+        } catch (SQLException e) {
+            System.out.println("SQL Exception thrown while getting all appointments: " + e.getMessage());
+            return new ArrayList<>(); 
+        }
+        return appointments;
+    }
     /**
      * Retrieves a doctor by name and specialty.
      * @param name the name to search for
@@ -202,6 +290,7 @@ public abstract class DatabaseAccessor {
                         rs.getString("FName"),
                         rs.getString("LName"),
                         rs.getString("username"),
+                        rs.getString("password"),
                         rs.getString("userType"),
                         rs.getString("specialty"),
                         rs.getString("phoneNumber")
@@ -436,7 +525,8 @@ public abstract class DatabaseAccessor {
                         rs.getString("FName"),
                         rs.getString("LName"),
                         rs.getString("username"),
-                        userType,
+                        rs.getString("password"),
+                        rs.getString("userType"),
                         rs.getString("specialty"),
                         rs.getString("phoneNumber")
                         );
@@ -476,7 +566,8 @@ public abstract class DatabaseAccessor {
                         rs.getString("FName"),
                         rs.getString("LName"),
                         rs.getString("username"),
-                        userType,
+                        rs.getString("password"),
+                        rs.getString("userType"),
                         rs.getString("specialty"),
                         rs.getString("phoneNumber")
                         );
@@ -494,7 +585,7 @@ public abstract class DatabaseAccessor {
      * @param message the message to add
      * @return true if successful, false otherwise
      */
-    public boolean  addMessage(Message message){
+    public static boolean addMessage(Message message){
         String sql = "INSERT INTO Messages (roomID, senderId, receiverId, messageText, timestamp) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -564,7 +655,7 @@ public abstract class DatabaseAccessor {
              * @return true if successful, false otherwise
              */
             public static boolean addAppointment(Appointment appointment){
-                String sql = "INSERT INTO appointments (patientID, doctorID, appointmentTime, status) VALUES (?, ?, ?, ?)";
+                String sql = "INSERT INTO Schedules (patientID, doctorID, appointmentTime, status) VALUES (?, ?, ?, ?)";
                 try (Connection conn = DatabaseConnector.getConnection();
                      PreparedStatement pstmt = conn.prepareStatement(sql)) {
                         // Convert LocalDateTime to Timestamp
@@ -593,7 +684,7 @@ public abstract class DatabaseAccessor {
              * @return true if successful, false otherwise
              */
             public static boolean updateAppointment(Appointment appointment){
-                String sql = "UPDATE appointments SET patientID = ?, doctorID = ?, appointmentTime = ?, status = ? WHERE scheduleID = ?";
+                String sql = "UPDATE Schedules SET patientID = ?, doctorID = ?, appointmentTime = ?, status = ? WHERE scheduleID = ?";
                 try (Connection conn = DatabaseConnector.getConnection();
                      PreparedStatement pstmt = conn.prepareStatement(sql)) {
                      java.sql.Timestamp timestamp = java.sql.Timestamp.valueOf(appointment.getAppointmentTime());
@@ -623,7 +714,7 @@ public abstract class DatabaseAccessor {
              * @return true if successful, false otherwise
              */
             public static boolean deleteAppointment(int appointmentId){
-                String sql = "DELETE FROM appointments WHERE scheduleID = ?";
+                String sql = "DELETE FROM Schedules WHERE scheduleID = ?";
                 try (Connection conn = DatabaseConnector.getConnection();
                      PreparedStatement pstmt = conn.prepareStatement(sql)) {
                     pstmt.setInt(1, appointmentId);
@@ -640,32 +731,68 @@ public abstract class DatabaseAccessor {
                     return false;
                 }
             }
-    /**
-     * Retrieves a list of all appointments.
-     * @return list of all appointments
-     */
-    public static List<Appointment> getAllAppointments(){
-        String sql = "SELECT * FROM Schedules "; // Changed table name to 'appointments' for consistency    
-        List<Appointment> appointments = new ArrayList<>();
-        try (Connection conn = DatabaseConnector.getConnection(); 
-            PreparedStatement stmt = conn.prepareStatement(sql); 
-            ResultSet rs = stmt.executeQuery()){ // Execute the query
-            
-               while (rs.next()) { // Iterate through the results
-                  Appointment appointment =  new Appointment(
-                        rs.getInt("scheduleID"),
-                        rs.getInt("patientID"),
-                        rs.getInt("doctorID"),
-                        rs.getLong("appointmentTime"), // Assuming appointmentTime is stored as a long (timestamp)
-                        rs.getString("status")
-                        );
-                  appointments.add(appointment);
-               }
-        } catch (SQLException e) {
-            System.out.println("SQL Exception thrown while getting all appointments: " + e.getMessage());
-            return new ArrayList<>(); 
-        }
-        return appointments;
-    }
-}    
 
+    // --- Admin Dashboard Statistics ---
+    public static Map<String, Integer> getUserRegistrationsByMonth() {
+        Map<String, Integer> result = new HashMap<>();
+        String sql = "SELECT strftime('%Y-%m', rowid) as month, COUNT(*) as count FROM users_table GROUP BY month ORDER BY month DESC";
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                result.put(rs.getString("month"), rs.getInt("count"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting user registrations by month: " + e.getMessage());
+        }
+        return result;
+    }
+    public static Map<String, Integer> getAppointmentsByMonth() {
+        Map<String, Integer> result = new HashMap<>();
+        String sql = "SELECT strftime('%Y-%m', appointmentTime) as month, COUNT(*) as count FROM Schedules GROUP BY month ORDER BY month DESC";
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                result.put(rs.getString("month"), rs.getInt("count"));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting appointments by month: " + e.getMessage());
+        }
+        return result;
+    }
+    public static List<Doctor> getMostActiveDoctors(int topN) {
+        List<Doctor> result = new ArrayList<>();
+        String sql = "SELECT doctorID, COUNT(*) as count FROM Schedules GROUP BY doctorID ORDER BY count DESC LIMIT ?";
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, topN);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Doctor d = (Doctor) getUserByID(rs.getInt("doctorID"));
+                    result.add(d);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting most active doctors: " + e.getMessage());
+        }
+        return result;
+    }
+    public static List<Patient> getMostActivePatients(int topN) {
+        List<Patient> result = new ArrayList<>();
+        String sql = "SELECT patientID, COUNT(*) as count FROM Schedules GROUP BY patientID ORDER BY count DESC LIMIT ?";
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, topN);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Patient p = (Patient) getUserByID(rs.getInt("patientID"));
+                    result.add(p);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting most active patients: " + e.getMessage());
+        }
+        return result;
+            }
+}    
