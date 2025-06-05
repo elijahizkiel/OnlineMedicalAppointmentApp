@@ -2,11 +2,13 @@ package com.example.OnlineMedicalAppointment.ui;
 
 import com.example.OnlineMedicalAppointment.model.User;
 import com.example.OnlineMedicalAppointment.model.Patient;
+import com.example.OnlineMedicalAppointment.model.Doctor;
+import com.example.OnlineMedicalAppointment.model.Appointment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.swing.*;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,29 +24,33 @@ class PatientBookingPanelTest {
     }
 
     @Test
-    void testDoctorPickerPopulated() {
-        JComboBox<String> doctorPicker = getDoctorPicker();
-        assertTrue(doctorPicker.getItemCount() > 0);
-    }
-
-    @Test
-    void testTimeSlotsReturned() {
+    void testAllTimeSlotsReturned() {
         List<String> slots = panel.getAllTimeSlots();
         assertNotNull(slots);
         assertFalse(slots.isEmpty());
+        // Should contain at least 9 slots for a typical 8-17 schedule
+        assertTrue(slots.size() >= 9);
     }
 
     @Test
-    void testIsDayFullyOccupiedReturnsBoolean() {
-        Date today = new Date();
-        boolean result = panel.isDayFullyOccupied(today);
-        assertNotNull(result);
+    void testTimePickerComboBoxUpdates() throws Exception {
+        // Access private timePicker field
+        JComboBox<String> timePicker = getTimePicker();
+        // Simulate selecting a doctor and a date
+        Doctor doctor = new Doctor("Doc", "Tor", "doctor1", "pass", "Doctor", "Cardiology", "1234567890");
+        LocalDate date = LocalDate.now().plusDays(1);
+        // Use reflection to call the private populateTimePicker method
+        var method = PatientBookingPanel.class.getDeclaredMethod(
+                "populateTimePicker", JComboBox.class, LocalDate.class, Doctor.class);
+        method.setAccessible(true);
+        method.invoke(panel, timePicker, date, doctor);
+        assertTrue(timePicker.getItemCount() > 0);
     }
 
-    // Helper to access private field via reflection (for test only)
-    private JComboBox<String> getDoctorPicker() {
+    // Helper to access private timePicker field via reflection
+    private JComboBox<String> getTimePicker() {
         try {
-            java.lang.reflect.Field field = PatientBookingPanel.class.getDeclaredField("doctorPicker");
+            var field = PatientBookingPanel.class.getDeclaredField("timePicker");
             field.setAccessible(true);
             return (JComboBox<String>) field.get(panel);
         } catch (Exception e) {

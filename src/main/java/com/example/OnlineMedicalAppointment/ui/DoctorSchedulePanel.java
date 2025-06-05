@@ -1,11 +1,16 @@
 package com.example.OnlineMedicalAppointment.ui;
 
 import java.awt.BorderLayout;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
+import java.awt.Dimension;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import javax.swing.*;
 import com.example.OnlineMedicalAppointment.model.User;
+import com.example.OnlineMedicalAppointment.model.Appointment;
+import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
+import com.github.lgooddatepicker.components.DatePicker;
+import com.github.lgooddatepicker.components.DatePickerSettings;
 
 /**
  * Panel for displaying and managing a doctor's schedule.
@@ -13,6 +18,8 @@ import com.example.OnlineMedicalAppointment.model.User;
 public class DoctorSchedulePanel extends JPanel {
 
     private User currentUser;
+    private JTable appointmentTable;
+    private DefaultListModel<String> appointmentListModel;
 
     /**
      * Constructs the DoctorSchedulePanel for the given user.
@@ -22,54 +29,57 @@ public class DoctorSchedulePanel extends JPanel {
         this.currentUser = user;
         setLayout(new BorderLayout());
 
-        JLabel titleLabel = new JLabel("Doctor Schedule for Dr." + user.getFName());
+        JLabel titleLabel = new JLabel("Doctor Schedule for Dr. " + user.getFName());
         add(titleLabel, BorderLayout.NORTH);
 
-        // Create a simple table model for the schedule
-        String[] columnNames = {"Time", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
-        Object[][] data = {
-            {"8:00 AM", "", "", "", "", "", "", ""},
-            {"9:00 AM", "", "", "", "", "", "", ""},
-            {"10:00 AM", "", "", "", "", "", "", ""},
-            {"11:00 AM", "", "", "", "", "", "", ""},
-            {"1:00 PM", "", "", "", "", "", "", ""},
-            {"2:00 PM", "", "", "", "", "", "", ""},
-            {"3:00 PM", "", "", "", "", "", "", ""}
-            // Add more time slots as needed
-        };
+        // Date picker for selecting the day
+        DatePickerSettings dateSettings = new DatePickerSettings();
+        DatePicker datePicker = new DatePicker(dateSettings);
+        datePicker.setDateToToday();
+        JPanel datePanel = new JPanel();
+        datePanel.add(new JLabel("Select Date:"));
+        datePanel.add(datePicker);
+        add(datePanel, BorderLayout.WEST);
 
+        // Table for appointments
+        String[] columnNames = {"Time", "Patient", "Status"};
+        Object[][] data = {}; // Will be filled dynamically
         javax.swing.table.DefaultTableModel model = new javax.swing.table.DefaultTableModel(data, columnNames);
-        javax.swing.JTable scheduleTable = new javax.swing.JTable(model);
-
-        // Add the table to a scroll pane
-        javax.swing.JScrollPane scrollPane = new javax.swing.JScrollPane(scheduleTable);
-
-        // Add the scroll pane to the center of the panel
+        appointmentTable = new JTable(model);
+        JScrollPane scrollPane = new JScrollPane(appointmentTable);
+        scrollPane.setPreferredSize(new Dimension(500, 200));
         add(scrollPane, BorderLayout.CENTER);
 
-            // Add buttons for loading and saving
-            JPanel buttonPanel = new JPanel();
-            javax.swing.JButton loadButton = new javax.swing.JButton("Load Schedule");
-            javax.swing.JButton saveButton = new javax.swing.JButton("Save Schedule");
+        // Load today's appointments initially
+        loadAppointmentsForDate(datePicker.getDate(), model);
 
-            buttonPanel.add(loadButton);
-            buttonPanel.add(saveButton);
+        // Listener for date changes
+        datePicker.addDateChangeListener(e -> {
+            LocalDate selectedDate = e.getNewDate();
+            loadAppointmentsForDate(selectedDate, model);
+        });
 
-            add(buttonPanel, BorderLayout.SOUTH);
+        // Optionally, add refresh button
+        JButton refreshButton = new JButton("Refresh");
+        refreshButton.addActionListener(e -> loadAppointmentsForDate(datePicker.getDate(), model));
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(refreshButton);
+        add(buttonPanel, BorderLayout.SOUTH);
+    }
 
-            // Add action listeners (placeholder logic)
-            loadButton.addActionListener(e -> {
-                // TODO: Implement logic to load schedule data from a source (e.g., file, database)
-                System.out.println("Load button clicked");
-                // Example: Call a method to load data into the model
-                // loadScheduleData(model);
-            });
-
-            saveButton.addActionListener(e -> {
-                // TODO: Implement logic to save schedule data to a source (e.g., file, database)
-                System.out.println("Save button clicked");
-                // Example: Call a method to save data from the model
-                // saveScheduleData(model);
-            });
+    private void loadAppointmentsForDate(LocalDate date, javax.swing.table.DefaultTableModel model) {
+        model.setRowCount(0); // Clear table
+        if (date == null) return;
+        List<Appointment> appointments = DatabaseAccessor.getAppointments(currentUser.getUserID());
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+        for (Appointment appt : appointments) {
+            if (appt.getAppointmentTime() != null &&
+                appt.getAppointmentTime().toLocalDate().equals(date)) {
+                String time = appt.getAppointmentTime().toLocalTime().format(timeFormatter);
+                String patient = String.valueOf(appt.getPatientID()); // Replace with patient name if available
+                String status = appt.getStatus();
+                model.addRow(new Object[]{time, patient, status});
+            }
+        }
     }
 }
