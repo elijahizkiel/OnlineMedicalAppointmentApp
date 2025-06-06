@@ -134,7 +134,17 @@ public class PatientBookingPanel extends JPanel {
         // Add appointments list at the top
         List<Appointment> appointments = DatabaseAccessor.getAppointments(currentUser.getUserID());
         appointments.sort((a, b) -> a.getAppointmentTime().compareTo(b.getAppointmentTime()));
+        System.out.println("~~~~~~~~~~##### List of Appointments for " + currentUser.getFName() + " " + currentUser.getLName());
+        if (appointments.isEmpty()) {
+        System.out.println("No appoint is found for user " + currentUser.getFName());}
+        else{System.out.println("Appointments: " + appointments);}
+        // Create a list model for appointments
         DefaultListModel<String> apptListModel = new DefaultListModel<>();
+        if (appointments.isEmpty()) {
+            apptListModel.addElement("No appointments found. Please book one below.");
+        } else {
+            apptListModel.addElement("Upcoming Appointments:");
+        }
         for (Appointment appt : appointments) {
             String line = String.format("%s | Dr. %s | %s",
                 appt.getAppointmentTime().toLocalDate() + " " + appt.getAppointmentTime().toLocalTime().withSecond(0).withNano(0),
@@ -371,6 +381,33 @@ public class PatientBookingPanel extends JPanel {
                 // Add the appointment to the database
                 DatabaseAccessor.addAppointment(newAppointment);
                 JOptionPane.showMessageDialog(this, "Appointment booked for " + selectedDate + " at " + startTimeString);
+
+                // --- Start: Code to re-populate appointments list ---
+                // Fetch the updated list of appointments
+                List<Appointment> updatedAppointments = DatabaseAccessor.getAppointments(currentUser.getUserID());
+                updatedAppointments.sort((a, b) -> a.getAppointmentTime().compareTo(b.getAppointmentTime()));
+
+                // Clear the existing list model
+                apptListModel.clear();
+
+                // Add the header back
+                if (updatedAppointments.isEmpty()) {
+                    apptListModel.addElement("No appointments found. Please book one below.");
+                } else {
+                    apptListModel.addElement("Upcoming Appointments:");
+                }
+
+                // Add the updated appointments to the list model
+                for (Appointment appt : updatedAppointments) {
+                    String line = String.format("%s | Dr. %s | %s",
+                        appt.getAppointmentTime().toLocalDate() + " " + appt.getAppointmentTime().toLocalTime().withSecond(0).withNano(0),
+                        appt.getDoctorName(),
+                        appt.getStatus()
+                    );
+                    apptListModel.addElement(line);
+                }
+                // --- End: Code to re-populate appointments list ---
+
             } catch (DateTimeParseException ex) {
                 JOptionPane.showMessageDialog(this, "Error booking appointment: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }

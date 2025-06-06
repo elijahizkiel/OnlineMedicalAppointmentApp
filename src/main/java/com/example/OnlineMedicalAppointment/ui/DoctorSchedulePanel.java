@@ -77,12 +77,20 @@ public class DoctorSchedulePanel extends JPanel {
         appointmentTable.setAutoCreateRowSorter(true);
         
         // Set column widths
-        TableColumn column = null;
+        TableColumn column;
         for (int i = 0; i < appointmentTable.getColumnCount(); i++) {
             column = appointmentTable.getColumnModel().getColumn(i);
-            if (i == 0) column.setPreferredWidth(80);  // Time
-            else if (i == 1) column.setPreferredWidth(200); // Patient Name
-            else column.setPreferredWidth(100); // Status
+            switch (i) {
+                case 0:
+                    column.setPreferredWidth(80); // Time
+                    break;
+                case 1:
+                    column.setPreferredWidth(200); // Patient Name
+                    break;
+                default:
+                    column.setPreferredWidth(100); // Status
+                    break;
+            }
         }
 
         JScrollPane scrollPane = new JScrollPane(appointmentTable);

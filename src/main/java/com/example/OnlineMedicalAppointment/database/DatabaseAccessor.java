@@ -263,8 +263,8 @@ public abstract class DatabaseAccessor {
                         rs.getInt("scheduleID"),
                         rs.getInt("patientID"),
                         rs.getInt("doctorID"),
-                        rs.getTimestamp("appointmentTime"), // Assuming appointmentTime is stored as a long (timestamp)
-                        rs.getTimestamp("bookedOn"), // Assuming bookedOn is stored as a timestamp
+                        rs.getTimestamp("appointmentTime").toLocalDateTime(), // Assuming appointmentTime is stored as a long (timestamp)
+                        rs.getTimestamp("bookedOn").toLocalDateTime(), // Assuming bookedOn is stored as a timestamp
                         rs.getString("status")
                         );
                   appointments.add(appointment);
@@ -357,23 +357,26 @@ public abstract class DatabaseAccessor {
      */
     public static List<Appointment> getAppointments(int userId){
         String sql = "SELECT * FROM Schedules WHERE doctorID = ? OR patientID = ?";
-
+        System.out.println("Getting appointments for user ID: " + userId);
         List<Appointment> appointments = new ArrayList<>();
         try (Connection conn = DatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, userId);
+            pstmt.setInt(2, userId);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     Appointment appointment = new Appointment(
                         rs.getInt("scheduleID"),
                         rs.getInt("patientID"),
                         rs.getInt("doctorId"),
-                        rs.getTimestamp("appointmentTime"),
-                        rs.getTimestamp("bookedOn"),// Assuming bookedOn is stored as a timestamp;
+                        rs.getTimestamp("appointmentTime").toLocalDateTime(),
+                        rs.getTimestamp("bookedOn").toLocalDateTime(),// Assuming bookedOn is stored as a timestamp;
                         rs.getString("status"));
                     appointments.add(appointment);
+                    System.out.println(appointment.toString());
                 }
             }
+            
         } catch (SQLException e) {
             System.out.println("SQLException thrown while getting appointment by userID: " + e.getMessage());
         }
@@ -660,16 +663,18 @@ public abstract class DatabaseAccessor {
              * @param appointment the appointment to add
              * @return true if successful, false otherwise
              */
-            public static boolean addAppointment(Appointment appointment){
-                String sql = "INSERT INTO Schedules (patientID, doctorID, appointmentTime, status) VALUES (?, ?, ?, ?)";
+    public static boolean addAppointment(Appointment appointment){
+                String sql = "INSERT INTO Schedules (patientID, doctorID, bookedOn, appointmentTime, status) VALUES (?, ?, ?, ?, ?)";
                 try (Connection conn = DatabaseConnector.getConnection();
                      PreparedStatement pstmt = conn.prepareStatement(sql)) {
                         // Convert LocalDateTime to Timestamp
                         java.sql.Timestamp timestamp = java.sql.Timestamp.valueOf(appointment.getAppointmentTime());
+                        java.sql.Timestamp bookedOnTimestamp = java.sql.Timestamp.valueOf(appointment.getBookedOn());
                         pstmt.setInt(1, appointment.getPatientID());
                         pstmt.setInt(2, appointment.getDoctorID());
-                        pstmt.setTimestamp(3, timestamp);
-                        pstmt.setString(4, appointment.getStatus());
+                        pstmt.setTimestamp(3, bookedOnTimestamp);
+                        pstmt.setTimestamp(4, timestamp);
+                        pstmt.setString(5, appointment.getStatus());
                         int affectedRows = pstmt.executeUpdate();
                         if (affectedRows > 0) {
                             System.out.println("Appointment added successfully.");
@@ -684,12 +689,12 @@ public abstract class DatabaseAccessor {
                 }
             }
 
-            /**
-             * Updates an appointment in the database.
-             * @param appointment the appointment to update
-             * @return true if successful, false otherwise
-             */
-            public static boolean updateAppointment(Appointment appointment){
+    /**
+    * Updates an appointment in the database.
+    * @param appointment the appointment to update
+    * @return true if successful, false otherwise
+    */
+    public static boolean updateAppointment(Appointment appointment){
                 String sql = "UPDATE Schedules SET patientID = ?, doctorID = ?, appointmentTime = ?, status = ? WHERE scheduleID = ?";
                 try (Connection conn = DatabaseConnector.getConnection();
                      PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -719,7 +724,7 @@ public abstract class DatabaseAccessor {
              * @param appointmentId the ID of the appointment to delete
              * @return true if successful, false otherwise
              */
-            public static boolean deleteAppointment(int appointmentId){
+    public static boolean deleteAppointment(int appointmentId){
                 String sql = "DELETE FROM Schedules WHERE scheduleID = ?";
                 try (Connection conn = DatabaseConnector.getConnection();
                      PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -918,6 +923,7 @@ public abstract class DatabaseAccessor {
                 }
             }
         } catch (SQLException e) {
+            System.out.println("SQL Exception thrown while executing query: " + e.getMessage());
             e.printStackTrace();
         }
         return results;
@@ -936,8 +942,8 @@ public abstract class DatabaseAccessor {
                         rs.getInt("scheduleID"),
                         rs.getInt("patientID"),
                         rs.getInt("doctorID"),
-                        rs.getTimestamp("appointmentTime"),
-                        rs.getTimestamp( "bookedOn"), // Assuming bookedOn is stored as a timestamp
+                        rs.getTimestamp("appointmentTime").toLocalDateTime(),
+                        rs.getTimestamp( "bookedOn").toLocalDateTime(), // Assuming bookedOn is stored as a timestamp
                         rs.getString("status")
                     );
                     appointments.add(appointment);

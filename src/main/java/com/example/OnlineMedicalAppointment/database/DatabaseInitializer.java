@@ -48,8 +48,8 @@ public class DatabaseInitializer {
                     "scheduleID INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "patientID INTEGER NOT NULL," +
                     "doctorID INTEGER NOT NULL," +
-                    "bookedOn DATETIME NOT NULL," +
-                    "appointmentTime DATETIME NOT NULL," +
+                    "bookedOn TIMESTAMP NOT NULL," +
+                    "appointmentTime TIMESTAMP NOT NULL," +
                     "status TEXT CHECK (status IN ('Pending','Approved', 'Rejected', 'Cancelled', 'Held')), " +
                     "FOREIGN KEY (doctorID) REFERENCES users_table(userID), " +
                     "FOREIGN KEY (patientID) REFERENCES users_table(userID)" +

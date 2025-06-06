@@ -1,13 +1,8 @@
 package com.example.OnlineMedicalAppointment.model;
 
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId; // Import ZoneId
 
 import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
-
-import java.sql.Timestamp; // Use java.sql.Timestamp
 
 /**
  * Represents an appointment in the Online Medical Appointment system.
@@ -18,7 +13,7 @@ public class Appointment {
         private int scheduleID;
         private int patientID; // User ID who made the appointment
         private int doctorID; // User ID of the doctor
-        private LocalDate bookedOn; // Date when the appointment was booked
+        private LocalDateTime bookedOn; // Date when the appointment was booked
         private LocalDateTime appointmentTime;
         private String status; // e.g., "Pending", "Approved", "Rejected", "Cancelled", "Held"
 
@@ -42,8 +37,8 @@ public class Appointment {
             this.patientID = madeBy;
             this.doctorID = doctorID;
             this.appointmentTime = appointmentTime;
+            this.bookedOn = LocalDateTime.now(); // Set bookedOn to current time
             this.status = status;
-            this.bookedOn = LocalDate.now(); // Set bookedOn to current date
         }
         /**
          * Constructs an Appointment with schedule ID and time as epoch millis.
@@ -54,17 +49,17 @@ public class Appointment {
          * @param status appointment status
          */
         public Appointment(int scheduleID,
-        int madeBy,
+        int madeBy, 
         int doctorID,
-        Timestamp appointmentTime,
-        Timestamp bookedOn,
+        LocalDateTime appointmentTime,
+        LocalDateTime bookedOn,
         String status) {
             this.scheduleID = scheduleID;
             this.patientID = madeBy;
             this.doctorID = doctorID;
-            this.bookedOn = bookedOn.toLocalDateTime().toLocalDate();
-            this.appointmentTime = appointmentTime.toLocalDateTime();
-        }
+            this.bookedOn = bookedOn;
+            this.status = status;
+            this.appointmentTime = appointmentTime;} 
         /**
          * Constructs an Appointment with patient, doctor, and time.
          * @param patientID patient ID
@@ -72,11 +67,11 @@ public class Appointment {
          * @param appointmentTime appointment time
          * This constructor sets the status to "Pending".
          */
-        public Appointment(int patientID, int doctorID, Timestamp appointmentTime, Timestamp bookedOn ){
+        public Appointment(int patientID, int doctorID, LocalDateTime appointmentTime, LocalDateTime bookedOn ){
             this.patientID = patientID;
             this.doctorID = doctorID;
-            this.bookedOn = bookedOn.toLocalDateTime().toLocalDate();
-            this.appointmentTime = appointmentTime.toLocalDateTime();
+            this.bookedOn = bookedOn;
+            this.appointmentTime = appointmentTime;
             this.status = "Pending"; 
         }
 
@@ -151,6 +146,20 @@ public class Appointment {
          */
         public void setAppointmentTime(java.time.LocalDateTime startTime) {
             this.appointmentTime = startTime;
+        }
+        /**
+         * Gets the date when the appointment was booked.
+         * @return the date when the appointment was booked
+         */
+        public LocalDateTime getBookedOn() {
+            return bookedOn;
+        }
+        /**
+         * Sets the date when the appointment was booked.
+         * @param bookedOn the date when the appointment was booked
+         */
+        public void setBookedOn(LocalDateTime bookedOn) {
+            this.bookedOn = bookedOn;
         }
 
         /**
