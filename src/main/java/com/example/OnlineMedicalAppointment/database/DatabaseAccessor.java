@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -263,6 +264,7 @@ public abstract class DatabaseAccessor {
                         rs.getInt("patientID"),
                         rs.getInt("doctorID"),
                         rs.getTimestamp("appointmentTime"), // Assuming appointmentTime is stored as a long (timestamp)
+                        rs.getTimestamp("bookedOn"), // Assuming bookedOn is stored as a timestamp
                         rs.getString("status")
                         );
                   appointments.add(appointment);
@@ -367,6 +369,7 @@ public abstract class DatabaseAccessor {
                         rs.getInt("patientID"),
                         rs.getInt("doctorId"),
                         rs.getTimestamp("appointmentTime"),
+                        rs.getTimestamp("bookedOn"),// Assuming bookedOn is stored as a timestamp;
                         rs.getString("status"));
                     appointments.add(appointment);
                 }
@@ -934,6 +937,7 @@ public abstract class DatabaseAccessor {
                         rs.getInt("patientID"),
                         rs.getInt("doctorID"),
                         rs.getTimestamp("appointmentTime"),
+                        rs.getTimestamp( "bookedOn"), // Assuming bookedOn is stored as a timestamp
                         rs.getString("status")
                     );
                     appointments.add(appointment);

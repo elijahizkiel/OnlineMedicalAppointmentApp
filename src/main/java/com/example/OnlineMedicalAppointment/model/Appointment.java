@@ -19,7 +19,7 @@ public class Appointment {
         private int patientID; // User ID who made the appointment
         private int doctorID; // User ID of the doctor
         private LocalDate bookedOn; // Date when the appointment was booked
-        private java.time.LocalDateTime appointmentTime;
+        private LocalDateTime appointmentTime;
         private String status; // e.g., "Pending", "Approved", "Rejected", "Cancelled", "Held"
 
         /**
@@ -43,6 +43,7 @@ public class Appointment {
             this.doctorID = doctorID;
             this.appointmentTime = appointmentTime;
             this.status = status;
+            this.bookedOn = LocalDate.now(); // Set bookedOn to current date
         }
         /**
          * Constructs an Appointment with schedule ID and time as epoch millis.
@@ -56,15 +57,13 @@ public class Appointment {
         int madeBy,
         int doctorID,
         Timestamp appointmentTime,
+        Timestamp bookedOn,
         String status) {
             this.scheduleID = scheduleID;
             this.patientID = madeBy;
             this.doctorID = doctorID;
-            // Convert java.sql.Timestamp to java.time.LocalDateTime
-            Instant instant = appointmentTime.toInstant();
-            ZoneId zoneId = ZoneId.systemDefault(); // Use the system's default time zone
-            this.appointmentTime = LocalDateTime.ofInstant(instant, zoneId);
-            this.status = status; // Assuming status should also be set in this constructor
+            this.bookedOn = bookedOn.toLocalDateTime().toLocalDate();
+            this.appointmentTime = appointmentTime.toLocalDateTime();
         }
         /**
          * Constructs an Appointment with patient, doctor, and time.
@@ -73,11 +72,11 @@ public class Appointment {
          * @param appointmentTime appointment time
          * This constructor sets the status to "Pending".
          */
-        public Appointment(int patientID, int doctorID, LocalDateTime appointmentTime, LocalDate bookedOn ){
+        public Appointment(int patientID, int doctorID, Timestamp appointmentTime, Timestamp bookedOn ){
             this.patientID = patientID;
             this.doctorID = doctorID;
-            this.bookedOn = bookedOn;
-            this.appointmentTime = appointmentTime;
+            this.bookedOn = bookedOn.toLocalDateTime().toLocalDate();
+            this.appointmentTime = appointmentTime.toLocalDateTime();
             this.status = "Pending"; 
         }
 

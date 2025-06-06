@@ -6,8 +6,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
-import javax.swing.JScrollPane.*;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -18,9 +16,9 @@ import com.example.OnlineMedicalAppointment.model.User;
 
 public class GeminiChatPanel extends JPanel {
     private final GeminiClient geminiClient;
-    private JTextArea chatArea;
-    private JTextField inputField;
-    private JButton sendButton;
+    private final JTextArea chatArea;
+    private final JTextField inputField;
+    private final JButton sendButton;
     
     public GeminiChatPanel(User user) {
         this.geminiClient = new GeminiClient();
@@ -36,6 +34,8 @@ public class GeminiChatPanel extends JPanel {
         // Chat display area
         chatArea = new JTextArea(15, 40);
         chatArea.setEditable(false);
+        chatArea.setLineWrap(true);
+        chatArea.setWrapStyleWord(true);
         chatArea.setFont(StyleConstants.NORMAL_FONT);
         chatArea.setBackground(StyleConstants.LIGHT_BG);
         
@@ -43,6 +43,7 @@ public class GeminiChatPanel extends JPanel {
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(scrollPane, BorderLayout.CENTER);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16); // Smooth scrolling
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED); // Always show vertical scrollbar
         scrollPane.setHorizontalScrollBarPolicy( JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); // Smooth horizontal scrolling
       
         // Input panel
