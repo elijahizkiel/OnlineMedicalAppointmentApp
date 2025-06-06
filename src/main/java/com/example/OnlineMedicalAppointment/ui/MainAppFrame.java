@@ -1,20 +1,20 @@
 package com.example.OnlineMedicalAppointment.ui;
 
 import java.awt.BorderLayout;    
+import java.awt.Color;
 
-import javax.swing.Box;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JButton;
 import javax.swing.JTabbedPane;
-import javax.swing.JLayeredPane;
-import java.awt.Color;
-import javax.swing.JDialog;
 
 import com.example.OnlineMedicalAppointment.model.Admin;
 import com.example.OnlineMedicalAppointment.model.Doctor;
@@ -152,8 +152,8 @@ public class MainAppFrame extends JFrame {
         int buttonSize = 40;
         int margin = 20;
         geminiButton.setBounds(
-            getWidth() - buttonSize - margin,
-            getHeight() - buttonSize - margin,
+            getWidth() - 2*(buttonSize - (2 * margin)),
+            getHeight() - 2*(buttonSize - (2 * margin)),
             buttonSize,
             buttonSize
         );

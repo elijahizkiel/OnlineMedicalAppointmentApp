@@ -4,17 +4,21 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
-import java.util.List;
-
-import com.example.OnlineMedicalAppointment.model.User;
+import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 import com.example.OnlineMedicalAppointment.model.Appointment;
 import com.example.OnlineMedicalAppointment.model.Doctor;
-import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
+import com.example.OnlineMedicalAppointment.model.User;
 
 public class PatientHomePanel extends JPanel {
 
@@ -64,22 +68,45 @@ public class PatientHomePanel extends JPanel {
 
         // Appointment card
         JPanel appointmentCard = createCard("Upcoming Appointments", "View and manage your appointments", "calendar-icon");
+        appointmentCard.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        appointmentCard.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                redirectToTab("Booking");
+            }
+        });
         cardsPanel.add(appointmentCard);
 
         // Doctors card
         JPanel doctorsCard = createCard("Find Doctors", "Search and book appointments with specialists", "doctor-icon");
+        doctorsCard.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        doctorsCard.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                redirectToTab("Booking");
+            }
+        });
         cardsPanel.add(doctorsCard);
-
-        // Medical Records card
-        JPanel recordsCard = createCard("Medical Records", "Access your health history and reports", "records-icon");
-        cardsPanel.add(recordsCard);
 
         // Messages card
         JPanel messagesCard = createCard("Messages", "Communicate with your healthcare providers", "messages-icon");
+        messagesCard.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        messagesCard.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                redirectToTab("Chat-Room");
+            }
+        });
         cardsPanel.add(messagesCard);
 
         contentPanel.add(cardsPanel, BorderLayout.CENTER);
-        add(contentPanel, BorderLayout.CENTER);
+
+        // Wrap contentPanel in a scroll pane for vertical scrolling
+        JScrollPane scrollPane = new JScrollPane(contentPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        add(scrollPane, BorderLayout.CENTER);
 
         // Show appointment status
         JLabel appointmentStatusLabel;
@@ -125,5 +152,23 @@ public class PatientHomePanel extends JPanel {
         card.add(textPanel, BorderLayout.CENTER);
         
         return card;
+    }
+
+    /**
+     * Helper to redirect to a tab in the main app frame by tab title.
+     */
+    private void redirectToTab(String tabTitle) {
+        java.awt.Component c = SwingUtilities.getWindowAncestor(this);
+        if (c instanceof javax.swing.JFrame frame) {
+            if (frame instanceof MainAppFrame mainFrame) {
+                javax.swing.JTabbedPane tabs = (javax.swing.JTabbedPane) mainFrame.getContentPane().getComponent(0);
+                for (int i = 0; i < tabs.getTabCount(); i++) {
+                    if (tabs.getTitleAt(i).equals(tabTitle)) {
+                        tabs.setSelectedIndex(i);
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

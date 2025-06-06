@@ -1,11 +1,15 @@
 package com.example.OnlineMedicalAppointment.model;
 
-import com.google.gson.Gson;
-import okhttp3.*;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.gson.Gson;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class GeminiClient {
     private static final String API_KEY = "AIzaSyCz4P3Ywm2e_7AG8Z67Phr7GVMUaW7D8-w";
@@ -35,10 +39,8 @@ public class GeminiClient {
     }
     
     static class RequestBody {
-        List<Content> contents;
         
         RequestBody(List<Content> contents) {
-            this.contents = contents;
         }
     }
     
