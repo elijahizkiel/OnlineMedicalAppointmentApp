@@ -2,13 +2,18 @@ package com.example.OnlineMedicalAppointment.model;
 
 import com.google.common.collect.ImmutableList;
 import com.google.genai.Client;
+import com.google.genai.types.Content;
 import com.google.genai.types.GenerateContentConfig;
 import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Tool;
+import com.google.genai.types.Part;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+
 import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 
 /**
@@ -21,7 +26,7 @@ public class GeminiClient {
             .build();
 
     private final GenerateContentConfig config;
-    private final List<String> chatHistory = new ArrayList<>();
+    private final List<Content> chatHistory = new ArrayList<>();
 
     /**
      * Constructs a GeminiClient, registering function-calling methods and initializing configuration.
@@ -57,15 +62,16 @@ public class GeminiClient {
      * @return The assistant's response, possibly including function call results.
      */
     public String generateContent(String prompt) {
-        chatHistory.add("User: " + prompt);
+        Content userContent = Content.fromParts(Part.fromText(prompt));
+        userContent.role();
+        chatHistory.add(userContent);
         GenerateContentResponse response = client.models.generateContent(
             "gemini-2.0-flash-001",
-            prompt,
+            chatHistory,
             config
         );
         String reply = response.text();
-        chatHistory.add("Gemini: " + reply);
-
+        
         StringBuilder sb = new StringBuilder();
         sb.append(reply);
 
@@ -73,14 +79,16 @@ public class GeminiClient {
         Optional<?> history = response.automaticFunctionCallingHistory();
         history.ifPresent(h -> sb.append("\nFunction calling history: ").append(h));
 
-        return sb.toString();
+        chatHistory.add(Content.fromParts(Part.fromText(sb.toString())));
+
+        return reply;
     }
 
     /**
      * Returns the chat history for the current session.
      * @return List of chat exchanges (user and assistant).
      */
-    public List<String> getChatHistory() {
+    public List<Content> getChatHistory() {
         return new ArrayList<>(chatHistory);
     }
 }

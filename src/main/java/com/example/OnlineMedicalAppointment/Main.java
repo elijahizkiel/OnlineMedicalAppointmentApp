@@ -3,6 +3,7 @@ package com.example.OnlineMedicalAppointment;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -44,6 +45,7 @@ public class Main {
             });
 
         } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Please Restart! Initialization failed by unknown reason.", "Error", JOptionPane.ERROR_MESSAGE);
             System.err.println("Database connection failed: " + e.getMessage());
         }
     }

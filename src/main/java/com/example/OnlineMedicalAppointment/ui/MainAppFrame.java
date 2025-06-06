@@ -3,20 +3,23 @@ package com.example.OnlineMedicalAppointment.ui;
 import java.awt.BorderLayout;    
 
 import javax.swing.Box;
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JButton;
 import javax.swing.JTabbedPane;
+import javax.swing.JLayeredPane;
+import java.awt.Color;
+import javax.swing.JDialog;
 
 import com.example.OnlineMedicalAppointment.model.Admin;
 import com.example.OnlineMedicalAppointment.model.Doctor;
 import com.example.OnlineMedicalAppointment.model.Patient;
 import com.example.OnlineMedicalAppointment.model.User;
-import com.example.OnlineMedicalAppointment.ui.SystemActivityPanel;
-import com.example.OnlineMedicalAppointment.ui.UserManagementPanel;
 
 /**
  * The main application frame for the Online Medical Appointment system.
@@ -26,6 +29,7 @@ public class MainAppFrame extends JFrame {
 
     private User currentUser;
     private final JTabbedPane tabbedPane;
+    private JButton geminiButton;
 
     /**
      * Constructs the main application frame for a given user.
@@ -67,6 +71,9 @@ public class MainAppFrame extends JFrame {
 
         // Setup Menu Bar for Profile and Logout
         setupMenuBar();
+
+        // Add Gemini floating button
+        createFloatingButton();
     }
 
     /**
@@ -131,5 +138,56 @@ public class MainAppFrame extends JFrame {
         menuBar.add(userMenu);
 
         setJMenuBar(menuBar);
+    }
+
+    private void createFloatingButton() {
+        geminiButton = new JButton("Gemini");
+        geminiButton.setBackground(StyleConstants.PRIMARY_COLOR);
+        geminiButton.setForeground(Color.WHITE);
+        geminiButton.setFont(StyleConstants.NORMAL_FONT);
+        geminiButton.setFocusPainted(false);
+        geminiButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        
+        // Position at bottom right
+        int buttonSize = 40;
+        int margin = 20;
+        geminiButton.setBounds(
+            getWidth() - buttonSize - margin,
+            getHeight() - buttonSize - margin,
+            buttonSize,
+            buttonSize
+        );
+        
+        geminiButton.addActionListener(e -> {
+            // Open Gemini chat dialog
+            openGeminiChat();
+        });
+        
+        // Add to layered pane so it floats above content
+        JLayeredPane layeredPane = getLayeredPane();
+        layeredPane.add(geminiButton, JLayeredPane.POPUP_LAYER);
+        
+        // Update position on resize
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                geminiButton.setBounds(
+                    getWidth() - buttonSize - margin,
+                    getHeight() - buttonSize - margin,
+                    buttonSize,
+                    buttonSize
+                );
+            }
+        });
+    }
+
+    private void openGeminiChat() {
+        JDialog dialog = new JDialog(this, "I Assistant", false);
+        dialog.setSize(500, 600);
+        dialog.setLocationRelativeTo(this);
+        
+        GeminiChatPanel chatPanel = new GeminiChatPanel(currentUser);
+        dialog.add(chatPanel);
+        
+        dialog.setVisible(true);
     }
 }
