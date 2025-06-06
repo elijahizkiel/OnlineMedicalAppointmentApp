@@ -1,94 +1,104 @@
 package com.example.OnlineMedicalAppointment.model;
 
-import com.google.common.collect.ImmutableList;
-import com.google.genai.Client;
-import com.google.genai.types.Content;
-import com.google.genai.types.GenerateContentConfig;
-import com.google.genai.types.GenerateContentResponse;
-import com.google.genai.types.Tool;
-import com.google.genai.types.Part;
+import com.google.gson.Gson;
+import okhttp3.*;
 
-import java.lang.reflect.Method;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-
-import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
-
-/**
- * GeminiClient integrates with Google GenAI to provide chat and function-calling capabilities.
- * It manages chat context, history, and automatic function calling for the Online Medical Appointment system.
- */
 public class GeminiClient {
-    private final Client client = Client.builder()
-            .apiKey("AIzaSyCz4P3Ywm2e_7AG8Z67Phr7GVMUaW7D8-w")
-            .build();
-
-    private final GenerateContentConfig config;
+    private static final String API_KEY = "AIzaSyCz4P3Ywm2e_7AG8Z67Phr7GVMUaW7D8-w";
+    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=" + API_KEY;
+    
     private final List<Content> chatHistory = new ArrayList<>();
+    private final OkHttpClient httpClient = new OkHttpClient();
+    private final Gson gson = new Gson();
 
-    /**
-     * Constructs a GeminiClient, registering function-calling methods and initializing configuration.
-     */
+    // Inner class for request/response structure
+    static class Content {
+        String role;
+        List<Part> parts;
+        
+        Content(String role, String text) {
+            this.role = role;
+            this.parts = List.of(new Part(text));
+        }
+    }
+    
+    static class Part {
+        String text;
+        
+        Part(String text) {
+            this.text = text;
+        }
+    }
+    
+    static class RequestBody {
+        List<Content> contents;
+        
+        RequestBody(List<Content> contents) {
+            this.contents = contents;
+        }
+    }
+    
+    static class ResponseBody {
+        List<Candidate> candidates;
+    }
+    
+    static class Candidate {
+        Content content;
+    }
+
     public GeminiClient() {
+        // Initialize with a system message
+        chatHistory.add(new Content("system", "You are a helpful assistant for an online medical appointment system."));
+    }
+
+    public String generateContent(String prompt) {
         try {
-            Class<?> dbClass = DatabaseAccessor.class;
-            ImmutableList<Method> functions = ImmutableList.of(
-                dbClass.getMethod("getDoctorsBySpecialty", String.class),
-                dbClass.getMethod("getDoctors"),
-                dbClass.getMethod("getMessages", String.class),
-                dbClass.getMethod("getAppointments", int.class),
-                dbClass.getMethod("getChatRoomID", int.class),
-                dbClass.getMethod("addUser", User.class),
-                dbClass.getMethod("getByUsername", String.class),
-                dbClass.getMethod("getUserByID", int.class)
-            );
-            this.config = GenerateContentConfig.builder()
-                .tools(
-                    ImmutableList.of(
-                        Tool.builder().functions(functions).build()
-                    )
-                )
+            // Add user message to chat history
+            chatHistory.add(new Content("user", prompt));
+            
+            // Prepare request payload
+            RequestBody requestBody = new RequestBody(chatHistory);
+            String json = gson.toJson(requestBody);
+            
+            // Create HTTP request
+            Request request = new Request.Builder()
+                .url(GEMINI_API_URL)
+                .post(okhttp3.RequestBody.create(json, MediaType.get("application/json")))
                 .build();
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException("Failed to register DatabaseAccessor functions", e);
+            
+            // Execute request
+            Response response = httpClient.newCall(request).execute();
+            
+            if (!response.isSuccessful()) {
+                throw new IOException("Unexpected response: " + response);
+            }
+            
+            // Parse response
+            ResponseBody responseBody = gson.fromJson(response.body().charStream(), ResponseBody.class);
+            if (responseBody.candidates == null || responseBody.candidates.isEmpty()) {
+                throw new IOException("No candidates in response");
+            }
+            
+            String reply = responseBody.candidates.get(0).content.parts.get(0).text;
+            
+            // Add model's response to chat history
+            chatHistory.add(new Content("assistant", reply));
+            
+            return reply;
+        } catch (Exception e) {
+            throw new RuntimeException("Error generating content: " + e.getMessage(), e);
         }
     }
 
-    /**
-     * Generates a response from Gemini based on the prompt, manages chat context, and supports function calling.
-     * @param prompt The user's message or question.
-     * @return The assistant's response, possibly including function call results.
-     */
-    public String generateContent(String prompt) {
-        Content userContent = Content.fromParts(Part.fromText(prompt));
-        userContent.role();
-        chatHistory.add(userContent);
-        GenerateContentResponse response = client.models.generateContent(
-            "gemini-2.0-flash-001",
-            chatHistory,
-            config
-        );
-        String reply = response.text();
-        
-        StringBuilder sb = new StringBuilder();
-        sb.append(reply);
-
-        // Optionally append function calling history if present
-        Optional<?> history = response.automaticFunctionCallingHistory();
-        history.ifPresent(h -> sb.append("\nFunction calling history: ").append(h));
-
-        chatHistory.add(Content.fromParts(Part.fromText(sb.toString())));
-
-        return reply;
-    }
-
-    /**
-     * Returns the chat history for the current session.
-     * @return List of chat exchanges (user and assistant).
-     */
     public List<Content> getChatHistory() {
         return new ArrayList<>(chatHistory);
+    }
+    
+    public void clearChatHistory() {
+        chatHistory.clear();
     }
 }

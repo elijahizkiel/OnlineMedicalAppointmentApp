@@ -16,6 +16,8 @@ import com.example.OnlineMedicalAppointment.model.Message;
 import com.example.OnlineMedicalAppointment.model.Patient;
 import com.example.OnlineMedicalAppointment.model.User;
 
+import java.time.LocalDate;
+
 /**
  * Abstract class providing static methods for database access and manipulation.
  */
@@ -916,5 +918,46 @@ public abstract class DatabaseAccessor {
             e.printStackTrace();
         }
         return results;
+    }
+
+    public static List<Appointment> getAppointmentsForDoctorOnDate(int doctorId, LocalDate date) {
+        List<Appointment> appointments = new ArrayList<>();
+        String sql = "SELECT * FROM Schedules WHERE doctorID = ? AND DATE(appointmentTime) = ?";
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, doctorId);
+            pstmt.setString(2, date.toString()); // LocalDate in ISO format (yyyy-MM-dd)
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Appointment appointment = new Appointment(
+                        rs.getInt("scheduleID"),
+                        rs.getInt("patientID"),
+                        rs.getInt("doctorID"),
+                        rs.getLong("appointmentTime"),
+                        rs.getString("status")
+                    );
+                    appointments.add(appointment);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting appointments for doctor on date: " + e.getMessage());
+        }
+        return appointments;
+    }
+
+    public static String getPatientName(int patientId) {
+        String sql = "SELECT FName, LName FROM users_table WHERE userID = ? AND userType = 'Patient'";
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, patientId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getString("FName") + " " + rs.getString("LName");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting patient name: " + e.getMessage());
+        }
+        return null;
     }
 }    
