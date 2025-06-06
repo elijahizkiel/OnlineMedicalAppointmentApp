@@ -91,7 +91,10 @@ public class DoctorSchedulePanel extends JPanel {
         // Buttons panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 10));
         JButton refreshButton = new JButton("Refresh");
-        refreshButton.setIcon(new ImageIcon(getClass().getResource("/icons/refresh.png")));
+        java.net.URL iconUrl = getClass().getResource("/icons/refresh.png");
+        if (iconUrl != null) {
+            refreshButton.setIcon(new ImageIcon(iconUrl));
+        }
         refreshButton.addActionListener(e -> loadAppointmentsForSelectedDate());
 
         statusLabel = new JLabel(" ");

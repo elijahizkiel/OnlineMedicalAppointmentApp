@@ -1,6 +1,9 @@
 package com.example.OnlineMedicalAppointment.ui;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -128,6 +131,27 @@ public class PatientBookingPanel extends JPanel {
         // Main content panel
         JPanel mainContentPanel = StyleConstants.createStyledPanel(new BorderLayout(10, 10));
         
+        // Add appointments list at the top
+        List<Appointment> appointments = DatabaseAccessor.getAppointments(currentUser.getUserID());
+        appointments.sort((a, b) -> a.getAppointmentTime().compareTo(b.getAppointmentTime()));
+        DefaultListModel<String> apptListModel = new DefaultListModel<>();
+        for (Appointment appt : appointments) {
+            String line = String.format("%s | Dr. %s | %s",
+                appt.getAppointmentTime().toLocalDate() + " " + appt.getAppointmentTime().toLocalTime().withSecond(0).withNano(0),
+                appt.getDoctorName(),
+                appt.getStatus()
+            );
+            apptListModel.addElement(line);
+        }
+        JList<String> apptList = new JList<>(apptListModel);
+        apptList.setFont(StyleConstants.NORMAL_FONT);
+        apptList.setBackground(StyleConstants.WHITE);
+        apptList.setBorder(BorderFactory.createTitledBorder("Your Appointments (Soonest First)"));
+        JScrollPane apptScrollPane = new JScrollPane(apptList);
+        apptScrollPane.setPreferredSize(new Dimension(600, 90));
+        apptScrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        contentPanel.add(apptScrollPane, BorderLayout.NORTH);
+
         // Doctor search panel
         JPanel doctorSearchPanel = StyleConstants.createStyledPanel(new BorderLayout(10, 10));
         doctorSearchPanel.setBorder(StyleConstants.createTitledBorder("Find a Doctor"));
@@ -184,6 +208,7 @@ public class PatientBookingPanel extends JPanel {
         
         SpinnerDateModel dateModel = new SpinnerDateModel();
         dateSpinner = new JSpinner(dateModel);
+        dateSpinner.setPreferredSize(new Dimension(120, 28)); // Reduce size
         dateSpinner.setEditor(new JSpinner.DateEditor(dateSpinner, "EEE, MMM d, yyyy"));
         dateEditor = ((JSpinner.DateEditor) dateSpinner.getEditor());
         dateEditor.getTextField().setEditable(false);

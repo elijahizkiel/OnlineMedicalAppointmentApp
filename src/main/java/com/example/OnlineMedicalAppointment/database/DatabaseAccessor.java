@@ -5,18 +5,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.OnlineMedicalAppointment.model.Admin;
 import com.example.OnlineMedicalAppointment.model.Appointment;
 import com.example.OnlineMedicalAppointment.model.Doctor;
 import com.example.OnlineMedicalAppointment.model.Message;
 import com.example.OnlineMedicalAppointment.model.Patient;
 import com.example.OnlineMedicalAppointment.model.User;
-
-import java.time.LocalDate;
 
 /**
  * Abstract class providing static methods for database access and manipulation.
@@ -262,7 +262,7 @@ public abstract class DatabaseAccessor {
                         rs.getInt("scheduleID"),
                         rs.getInt("patientID"),
                         rs.getInt("doctorID"),
-                        rs.getLong("appointmentTime"), // Assuming appointmentTime is stored as a long (timestamp)
+                        rs.getTimestamp("appointmentTime"), // Assuming appointmentTime is stored as a long (timestamp)
                         rs.getString("status")
                         );
                   appointments.add(appointment);
@@ -366,13 +366,13 @@ public abstract class DatabaseAccessor {
                         rs.getInt("scheduleID"),
                         rs.getInt("patientID"),
                         rs.getInt("doctorId"),
-                        rs.getLong("appointmentTime"),
+                        rs.getTimestamp("appointmentTime"),
                         rs.getString("status"));
                     appointments.add(appointment);
                 }
             }
         } catch (SQLException e) {
-            System.out.println("SQLExceprion thrown while getting appointment: " + e.getMessage());
+            System.out.println("SQLException thrown while getting appointment by userID: " + e.getMessage());
         }
         return appointments;
 
@@ -408,7 +408,7 @@ public abstract class DatabaseAccessor {
      * @return true if successful, false otherwise
      */
     public static boolean addUser(User user){
-        String sql = "INSERT INTO users (FName, LName, username, password, userType, specialty, phoneNumber) VALUES ( ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users_table (FName, LName, username, password, userType, specialty, phoneNumber) VALUES ( ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, user.getFName());
@@ -933,7 +933,7 @@ public abstract class DatabaseAccessor {
                         rs.getInt("scheduleID"),
                         rs.getInt("patientID"),
                         rs.getInt("doctorID"),
-                        rs.getLong("appointmentTime"),
+                        rs.getTimestamp("appointmentTime"),
                         rs.getString("status")
                     );
                     appointments.add(appointment);
@@ -959,5 +959,54 @@ public abstract class DatabaseAccessor {
             System.err.println("Error getting patient name: " + e.getMessage());
         }
         return null;
+    }
+
+    /**
+     * Retrieves a list of all users (patients and doctors).
+     * @return list of all users
+     */
+    public static List<User> getAllUsers() {
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM users_table";
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                String userType = rs.getString("userType");
+                if (userType.equals("Patient")) {
+                    users.add(new Patient(
+                        rs.getInt("userID"),
+                        rs.getString("FName"),
+                        rs.getString("LName"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("phoneNumber")
+                    ));
+                } else if (userType.equals("Doctor")) {
+                    users.add(new Doctor(
+                        rs.getInt("userID"),
+                        rs.getString("FName"),
+                        rs.getString("LName"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("userType"),
+                        rs.getString("specialty"),
+                        rs.getString("phoneNumber")
+                    ));
+                } else if (userType.equals("Admin")) {
+                    users.add(new Admin(
+                        rs.getInt("userID"),
+                        rs.getString("FName"),
+                        rs.getString("LName"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("phoneNumber")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving all users: " + e.getMessage());
+        }
+        return users;
     }
 }    
