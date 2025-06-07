@@ -1,9 +1,27 @@
 package com.example.OnlineMedicalAppointment.ui;
 
-import com.example.OnlineMedicalAppointment.model.*;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+
+import com.example.OnlineMedicalAppointment.model.Admin;
+import com.example.OnlineMedicalAppointment.model.Doctor;
+import com.example.OnlineMedicalAppointment.model.Patient;
+import com.example.OnlineMedicalAppointment.model.User;
+
+/**
+ * Panel for displaying and editing a user's profile information.
+ */
 public class ProfilePanel extends JPanel {
 
     private final User currentUser;

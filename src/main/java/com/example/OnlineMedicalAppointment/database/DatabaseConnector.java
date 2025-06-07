@@ -6,6 +6,7 @@ import java.sql.SQLException;
 
 /**
  * Utility class for managing database connections.
+ * Provides methods to connect to and retrieve the SQLite database connection.
  */
 public class DatabaseConnector {
     private static final String DB_URL = "jdbc:sqlite:online_medical_appointment.db";

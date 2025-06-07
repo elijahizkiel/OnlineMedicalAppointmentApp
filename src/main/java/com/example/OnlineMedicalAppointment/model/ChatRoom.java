@@ -1,8 +1,13 @@
 package com.example.OnlineMedicalAppointment.model;
 
 import java.util.List;
+
 import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 
+/**
+ * Represents a chat room between two users (typically a Patient and a Doctor).
+ * Stores information about the chat room and the users involved.
+ */
 public class ChatRoom {
     private String chatRoomName;
     private int chatRoomID;

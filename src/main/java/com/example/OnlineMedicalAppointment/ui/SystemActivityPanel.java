@@ -1,8 +1,18 @@
 package com.example.OnlineMedicalAppointment.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
+
+/**
+ * Panel for displaying system activity statistics, such as cancellation rates.
+ */
 public class SystemActivityPanel extends JPanel {
     public SystemActivityPanel() {
         setLayout(new BorderLayout());

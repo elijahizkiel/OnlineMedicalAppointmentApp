@@ -23,7 +23,7 @@ import com.example.OnlineMedicalAppointment.database.DatabaseConnector;
 import com.example.OnlineMedicalAppointment.model.User;
 
 /**
- * Frame for user login.
+ * Frame for user login functionality.
  */
 public class LoginFrame extends JFrame {
 
@@ -33,7 +33,7 @@ public class LoginFrame extends JFrame {
     private final JButton signupButton;
 
     /**
-     * Constructs the LoginFrame.
+     * Constructs the login frame.
      */
     public LoginFrame() {
         setTitle("Login");
@@ -130,6 +130,7 @@ public class LoginFrame extends JFrame {
 
     /**
      * Authenticates the user with the given username and password.
+     * 
      * @param username the username
      * @param password the password
      * @return true if authentication is successful, false otherwise

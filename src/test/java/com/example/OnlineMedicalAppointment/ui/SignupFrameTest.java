@@ -1,11 +1,14 @@
 package com.example.OnlineMedicalAppointment.ui;
 
+import javax.swing.JFrame;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
-import javax.swing.*;
-
-import static org.junit.jupiter.api.Assertions.*;
-
+/**
+ * Unit tests for the SignupFrame class.
+ */
 class SignupFrameTest {
     @Test
     void testSignupFrameComponents() {

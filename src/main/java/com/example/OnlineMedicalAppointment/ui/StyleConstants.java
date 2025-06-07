@@ -1,9 +1,23 @@
 package com.example.OnlineMedicalAppointment.ui;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.border.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.LayoutManager;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
+
+/**
+ * Provides consistent styling constants and helper methods for UI components.
+ */
 public class StyleConstants {
     // Colors
     public static final Color PRIMARY_COLOR = new Color(0, 123, 255);

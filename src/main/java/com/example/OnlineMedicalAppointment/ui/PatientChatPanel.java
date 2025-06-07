@@ -24,6 +24,11 @@ import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 import com.example.OnlineMedicalAppointment.model.ChatRoom;
 import com.example.OnlineMedicalAppointment.model.Message;
 
+/**
+ * Panel for patient chat functionality.
+ * Allows patients to view chat rooms and send messages to doctors.
+ * Note: This panel is superseded by the generic ChatPanel.
+ */
 public class PatientChatPanel extends JPanel {
 
     private final User currentUser;

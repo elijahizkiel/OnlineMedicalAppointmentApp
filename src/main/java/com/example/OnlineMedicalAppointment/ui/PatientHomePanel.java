@@ -20,6 +20,10 @@ import com.example.OnlineMedicalAppointment.model.Appointment;
 import com.example.OnlineMedicalAppointment.model.Doctor;
 import com.example.OnlineMedicalAppointment.model.User;
 
+/**
+ * Panel for displaying the patient's home view.
+ * Shows a welcome message, quick access cards, and upcoming appointments/doctors.
+ */
 public class PatientHomePanel extends JPanel {
 
     private final User currentUser;

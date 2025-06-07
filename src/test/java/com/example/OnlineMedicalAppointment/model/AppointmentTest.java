@@ -1,11 +1,13 @@
 package com.example.OnlineMedicalAppointment.model;
 
-import org.junit.jupiter.api.Test;
-
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
 
+/**
+ * Unit tests for the Appointment class.
+ */
 class AppointmentTest {
     @Test
     void testAppointmentFields() {

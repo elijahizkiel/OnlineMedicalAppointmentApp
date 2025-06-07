@@ -20,9 +20,9 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
-import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingConstants;
 
@@ -37,10 +37,29 @@ import com.example.OnlineMedicalAppointment.model.User;
  */
 public class PatientBookingPanel extends JPanel {
 
+    /**
+     * The current user (patient) using the panel.
+     */
     private User currentUser;
+
+    /**
+     * Spinner for selecting the appointment date.
+     */
     private JSpinner dateSpinner;
+
+    /**
+     * Combo box for selecting the appointment time.
+     */
     private JComboBox<String> timePicker;
+
+    /**
+     * The selected doctor for the appointment.
+     */
     private Doctor selectedDoctor;
+
+    /**
+     * Editor for the date spinner.
+     */
     private JSpinner.DateEditor dateEditor;
 
     /**

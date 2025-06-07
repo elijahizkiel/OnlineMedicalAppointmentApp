@@ -14,6 +14,7 @@ import com.example.OnlineMedicalAppointment.model.User;
 
 /**
  * Provides authentication and signup services for users.
+ * Interacts with the database to validate login credentials and register new users.
  */
 public class AuthService {
 

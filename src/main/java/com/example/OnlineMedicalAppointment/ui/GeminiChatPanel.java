@@ -14,6 +14,10 @@ import javax.swing.SwingConstants;
 import com.example.OnlineMedicalAppointment.model.GeminiClient;
 import com.example.OnlineMedicalAppointment.model.User;
 
+/**
+ * Panel for interacting with the Gemini AI Assistant.
+ * Allows users to send text prompts and receive responses from the AI.
+ */
 public class GeminiChatPanel extends JPanel {
     private final GeminiClient geminiClient;
     private final JTextArea chatArea;

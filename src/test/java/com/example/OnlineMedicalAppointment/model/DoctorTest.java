@@ -3,6 +3,9 @@ package com.example.OnlineMedicalAppointment.model;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Unit tests for the Doctor class.
+ */
 class DoctorTest {
     @Test
     void testDoctorFields() {

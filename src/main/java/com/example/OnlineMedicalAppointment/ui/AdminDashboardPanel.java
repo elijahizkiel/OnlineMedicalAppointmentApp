@@ -18,18 +18,19 @@ import com.example.OnlineMedicalAppointment.model.Appointment;
 import com.example.OnlineMedicalAppointment.model.User;
 
 /**
- * Panel for displaying the admin dashboard.
+ * Dashboard panel for admin users.
+ * 
+ * This panel displays the admin dashboard, including user and appointment statistics.
  */
 public class AdminDashboardPanel extends JPanel {
 
     private final User currentUser;
 
     /**
-     * Constructs the AdminDashboardPanel for the given user.
+     * Constructs the admin dashboard panel for the given user.
      * 
      * @param user the current user
      */
-
     public AdminDashboardPanel(User user) {
         this.currentUser = user;
         setLayout(new BorderLayout());
@@ -95,6 +96,13 @@ public class AdminDashboardPanel extends JPanel {
         add(Box.createRigidArea(new Dimension(0, 20)), BorderLayout.SOUTH);
     }
 
+    /**
+     * Creates a panel for displaying a statistic label and value.
+     * 
+     * @param label the label text
+     * @param value the value to display
+     * @return the statistic label panel
+     */
     private JPanel statLabel(String label, long value) {
         JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 8));
         JLabel l = StyleConstants.createLabel(label, StyleConstants.NORMAL_FONT);

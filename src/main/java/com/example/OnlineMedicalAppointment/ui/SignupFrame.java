@@ -23,6 +23,9 @@ import com.example.OnlineMedicalAppointment.model.Doctor;
 import com.example.OnlineMedicalAppointment.model.Patient;
 import com.example.OnlineMedicalAppointment.model.User;
 
+/**
+ * Frame for user signup functionality.
+ */
 public class SignupFrame extends JFrame {
 
     private JTextField firstNameField;
@@ -36,6 +39,9 @@ public class SignupFrame extends JFrame {
     private JButton signupButton;
     private JButton backToLoginButton;
 
+    /**
+     * Constructs the signup frame.
+     */
     public SignupFrame() {
         setTitle("Sign Up");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -197,6 +203,18 @@ public class SignupFrame extends JFrame {
         });
     }
 
+    /**
+     * Creates a new user based on the provided details.
+     * 
+     * @param firstName  the first name of the user
+     * @param lastName   the last name of the user
+     * @param username   the username of the user
+     * @param password   the password of the user
+     * @param userType   the type of user (Patient, Doctor, or Admin)
+     * @param specialty  the specialty of the doctor (if applicable)
+     * @param phoneNumber the phone number of the user
+     * @return true if the user was created successfully, false otherwise
+     */
     private boolean createUser(String firstName, String lastName, String username, String password, String userType, String specialty, String phoneNumber) {
         User user;
         switch (userType) {

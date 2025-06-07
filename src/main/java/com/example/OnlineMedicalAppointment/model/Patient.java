@@ -10,27 +10,49 @@ import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 public class Patient extends  DatabaseAccessor implements User{
 
     /**
-     * Constructor for Patient user.
-     * @param userID    the user ID
-     * @param FName     the first name
-     * @param LName     the last name
-     * @param username  the username
-     * @param password  the password
-     * @param userType  the user type (always "Patient")
-     * @param phoneNumber the phone number
+     * Unique identifier for the patient.
      */
     private int userID;
+    
+    /**
+     * First name of the patient.
+     */
     private String FName;
+    
+    /**
+     * Last name of the patient.
+     */
     private String LName;
+    
+    /**
+     * Username chosen by the patient.
+     */
     private String username;
+    
+    /**
+     * Password for the patient's account.
+     */
     private String password;
+    
+    /**
+     * Type of user (always "Patient").
+     */
     private String userType = "Patient"; 
-    private String specialty= null; // Not applicable for Patient, but included for interface compliance
+    
+    /**
+     * Specialty of the patient (not applicable for Patient, but included for interface compliance).
+     */
+    private String specialty= null; 
+    
+    /**
+     * Phone number of the patient.
+     */
     private String phoneNumber;
 
 
     /**
      * Constructs a Patient with all details.
+     * 
      * @param userID the user ID
      * @param FName the first name
      * @param LName the last name
@@ -49,6 +71,7 @@ public class Patient extends  DatabaseAccessor implements User{
 
     /**
      * Constructs a Patient without password.
+     * 
      * @param userID the user ID
      * @param FName the first name
      * @param LName the last name
@@ -65,6 +88,7 @@ public class Patient extends  DatabaseAccessor implements User{
 
     /**
      * Constructs a Patient without userID.
+     * 
      * @param FName the first name
      * @param LName the last name
      * @param username the username
@@ -189,7 +213,8 @@ public class Patient extends  DatabaseAccessor implements User{
     };
 
     /**
-     * {@inheritDoc}
+     * Gets the patient's phone number.
+     * @return phone number
      */
     @Override
     public String getPhoneNumber(){
@@ -197,7 +222,8 @@ public class Patient extends  DatabaseAccessor implements User{
         }
 
     /**
-     * {@inheritDoc}
+     * Sets the patient's phone number.
+     * @param phoneNumber the phone number
      */
     @Override
     public void setPhoneNumber(String phoneNumber){

@@ -15,6 +15,9 @@ import com.example.OnlineMedicalAppointment.model.Doctor;
 import com.example.OnlineMedicalAppointment.model.Patient;
 import com.example.OnlineMedicalAppointment.model.User;
 
+/**
+ * Unit tests for the PatientBookingPanel class.
+ */
 class PatientBookingPanelTest {
     private PatientBookingPanel panel;
     private User dummyUser;

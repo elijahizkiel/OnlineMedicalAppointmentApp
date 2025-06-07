@@ -1,13 +1,17 @@
 package com.example.OnlineMedicalAppointment.ui;
 
-import com.example.OnlineMedicalAppointment.model.Patient;
-import com.example.OnlineMedicalAppointment.model.User;
+import javax.swing.JPanel;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
-import javax.swing.*;
+import com.example.OnlineMedicalAppointment.model.Patient;
+import com.example.OnlineMedicalAppointment.model.User;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+/**
+ * Unit tests for the ProfilePanel class.
+ */
 class ProfilePanelTest {
     @Test
     void testProfilePanelCreation() {

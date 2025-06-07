@@ -1,9 +1,11 @@
 package com.example.OnlineMedicalAppointment.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+/**
+ * Unit tests for the Admin class.
+ */
 class AdminTest {
     @Test
     void testAdminFields() {

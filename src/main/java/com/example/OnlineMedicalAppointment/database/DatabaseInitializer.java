@@ -6,6 +6,7 @@ import java.sql.Statement;
 
 /**
  * Utility class for initializing the database schema.
+ * Creates necessary tables if they do not already exist.
  */
 public class DatabaseInitializer {
 

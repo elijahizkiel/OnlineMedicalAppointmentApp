@@ -1,13 +1,30 @@
 package com.example.OnlineMedicalAppointment.ui;
 
-import javax.swing.*;
-import java.awt.*;
-import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
-import com.example.OnlineMedicalAppointment.model.User;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
 import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
+import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
+import com.example.OnlineMedicalAppointment.model.User;
+
+/**
+ * Panel for managing users (viewing and potentially deleting).
+ * Displays a table of all users fetched from the database.
+ */
 public class UserManagementPanel extends JPanel {
+    /**
+     * Constructs the UserManagementPanel.
+     * Initializes the UI components, fetches user data, and populates the table.
+     */
     public UserManagementPanel() {
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));

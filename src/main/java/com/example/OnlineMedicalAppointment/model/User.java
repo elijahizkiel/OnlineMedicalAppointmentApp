@@ -2,7 +2,7 @@ package com.example.OnlineMedicalAppointment.model;
 
 /**
  * User interface for the Online Medical Appointment system.
- * Defines common user-related methods for all user types.
+ * Defines common user-related methods for all user types (Patient, Doctor, Admin).
  */
 public interface User {
     /**

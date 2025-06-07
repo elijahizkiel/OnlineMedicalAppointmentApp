@@ -5,16 +5,48 @@ import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 /**
  * Represents a Doctor user in the Online Medical Appointment system.
  * Stores doctor-specific information and provides doctor-related functionality.
+ * Extends DatabaseAccessor and implements User interface.
  */
 public class Doctor extends DatabaseAccessor implements User {
 
+    /**
+     * Unique identifier for the doctor.
+     */
     private int doctorsID;
+
+    /**
+     * First name of the doctor.
+     */
     private String FName;
+
+    /**
+     * Last name of the doctor.
+     */
     private String LName;
+
+    /**
+     * Username chosen by the doctor.
+     */
     private String username;
+
+    /**
+     * Password for the doctor's account.
+     */
     private String password;
+
+    /**
+     * Type of user (should be "Doctor").
+     */
     private String userType = "Doctor"; 
+
+    /**
+     * Doctor's specialty.
+     */
     private String specialty;
+
+    /**
+     * Phone number of the doctor.
+     */
     private String phoneNumber;
 
     /**
@@ -30,7 +62,7 @@ public class Doctor extends DatabaseAccessor implements User {
      */
     public Doctor(String FName, String LName, String username, String password, String userType, String specialty, String phoneNumber) {
 
-        }    
+    }    
     /**
      * Default constructor.
      */

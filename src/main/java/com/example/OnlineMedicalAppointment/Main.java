@@ -13,6 +13,7 @@ import com.example.OnlineMedicalAppointment.ui.LoginFrame;
 
 /**
  * Main entry point for the Online Medical Appointment application.
+ * Initializes the database and launches the login frame.
  */
 public class Main {
     public static Connection connection;
