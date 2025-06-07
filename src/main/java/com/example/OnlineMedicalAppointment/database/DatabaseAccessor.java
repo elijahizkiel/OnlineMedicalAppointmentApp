@@ -6,12 +6,10 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID; // Import UUID for generating room IDs
 
 import com.example.OnlineMedicalAppointment.model.Admin;
 import com.example.OnlineMedicalAppointment.model.Appointment;
@@ -460,6 +458,9 @@ public abstract class DatabaseAccessor {
                     appointments.add(appointment);
                     System.out.println(appointment.toString());
                 }
+                if(rs.getFetchSize() == 0){
+                    System.out.println("No appointment for userID:" + userId);
+                }
             }
             
         } catch (SQLException e) {
@@ -857,16 +858,17 @@ public abstract class DatabaseAccessor {
                 try (Connection conn = DatabaseConnector.getConnection();
                      PreparedStatement pstmt = conn.prepareStatement(sql)) {
                         // Convert LocalDateTime to Timestamp
-                        java.sql.Timestamp timestamp = java.sql.Timestamp.valueOf(appointment.getAppointmentTime());
+                        java.sql.Timestamp appointmentTimestamp = java.sql.Timestamp.valueOf(appointment.getAppointmentTime());
                         java.sql.Timestamp bookedOnTimestamp = java.sql.Timestamp.valueOf(appointment.getBookedOn());
                         pstmt.setInt(1, appointment.getPatientID());
                         pstmt.setInt(2, appointment.getDoctorID());
                         pstmt.setTimestamp(3, bookedOnTimestamp);
-                        pstmt.setTimestamp(4, timestamp);
+                        pstmt.setTimestamp(4, appointmentTimestamp);
                         pstmt.setString(5, appointment.getStatus());
                         int affectedRows = pstmt.executeUpdate();
                         if (affectedRows > 0) {
                             System.out.println("Appointment added successfully.");
+                            System.out.println("Appointment time: " + appointmentTimestamp.toString() +"\n booked on: " + bookedOnTimestamp.toString());
                             return true;
                         } else {
                             System.out.println("Failed to add appointment.");

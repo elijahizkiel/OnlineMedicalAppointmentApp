@@ -142,8 +142,8 @@ public class MainAppFrame extends JFrame {
 
     private void createFloatingButton() {
         geminiButton = new JButton("Gemini");
-        geminiButton.setBackground(StyleConstants.SUCCESS_COLOR);
-        geminiButton.setForeground(Color.WHITE);
+        geminiButton.setBackground(Color.BLUE);
+        geminiButton.setForeground(Color.BLUE);
         geminiButton.setFont(StyleConstants.NORMAL_FONT);
         geminiButton.setFocusPainted(false);
         geminiButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));

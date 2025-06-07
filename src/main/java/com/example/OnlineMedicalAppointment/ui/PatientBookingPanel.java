@@ -162,7 +162,7 @@ public class PatientBookingPanel extends JPanel {
         // Add appointments list at the top
         List<Appointment> appointments = DatabaseAccessor.getAppointments(currentUser.getUserID());
         appointments.sort((a, b) -> a.getAppointmentTime().compareTo(b.getAppointmentTime()));
-        System.out.println("~~~~~~~~~~##### List of Appointments for " + currentUser.getFName() + " " + currentUser.getLName());
+        System.out.println("~~~~~~~~~~##### List of Appointments for " + currentUser.getFName() + " " + currentUser.getLName() + "#####~~~~~~~~~~~");
         if (appointments.isEmpty()) {
         System.out.println("No appoint is found for user " + currentUser.getFName());}
         else{System.out.println("Appointments: " + appointments);}

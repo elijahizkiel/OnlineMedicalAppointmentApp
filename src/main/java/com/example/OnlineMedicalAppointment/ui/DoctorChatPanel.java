@@ -159,6 +159,9 @@ public class DoctorChatPanel extends JPanel {
             return;
         }
 
+        messagesDisplayArea.append("You: " + messageText + "\n");
+         // Display sent message in chat area
+
         // Create and send the message
         Message newMessage = new Message(
             null, // id will be set by database
