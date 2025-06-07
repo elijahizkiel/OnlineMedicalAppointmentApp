@@ -4,12 +4,13 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
+import java.util.List; // Import Font
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
@@ -20,9 +21,9 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 import javax.swing.SwingConstants;
 
@@ -79,10 +80,12 @@ public class PatientBookingPanel extends JPanel {
         public java.awt.Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+            // Assuming StyleConstants.NORMAL_FONT provides a readable font
             setFont(StyleConstants.NORMAL_FONT);
-            
+
             if (value instanceof Doctor doctor) {
                 setText(doctor.getFName() + " " + doctor.getLName() + " (" + doctor.getSpecialty() + ")");
+                // Assuming StyleConstants colors provide good contrast
                 if (isSelected) {
                     setBackground(StyleConstants.PRIMARY_COLOR.darker());
                     setForeground(StyleConstants.WHITE);
@@ -92,9 +95,12 @@ public class PatientBookingPanel extends JPanel {
                 }
             } else if (value instanceof String text) {
                 setText(text);
-                setFont(StyleConstants.NORMAL_FONT.deriveFont(java.awt.Font.ITALIC));
+                // Assuming StyleConstants fonts and colors provide good contrast
+                setFont(StyleConstants.NORMAL_FONT.deriveFont(Font.ITALIC)); // Use Font import
                 setForeground(StyleConstants.SECONDARY_COLOR);
             }
+            // Note: Verify that StyleConstants.PRIMARY_COLOR.darker() vs WHITE and WHITE vs TEXT_COLOR/SECONDARY_COLOR
+            // provide sufficient contrast ratios (e.g., 4.5:1 for normal text, 3:1 for large text).
             return this;
         }
     }
@@ -134,22 +140,25 @@ public class PatientBookingPanel extends JPanel {
     public PatientBookingPanel(User user) {
         this.currentUser = user;
         setLayout(new BorderLayout(0, 10));
+        // Assuming StyleConstants.LIGHT_BG provides a light background
         setBackground(StyleConstants.LIGHT_BG);
         setBorder(BorderFactory.createEmptyBorder(10, 15, 15, 15));
-        
+
         // Create a wrapper panel to hold all content and make it scrollable
         JPanel contentPanel = new JPanel(new BorderLayout());
-        contentPanel.setBackground(StyleConstants.LIGHT_BG);
-        
+        contentPanel.setBackground(StyleConstants.LIGHT_BG); // Match main panel background
+
         // Title
+        // Assuming StyleConstants.createLabel and StyleConstants.TITLE_FONT provide good contrast
         JLabel titleLabel = StyleConstants.createLabel("Book Your Appointment", StyleConstants.TITLE_FONT);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
         contentPanel.add(titleLabel, BorderLayout.NORTH);
 
         // Main content panel
+        // Assuming StyleConstants.createStyledPanel provides a styled panel
         JPanel mainContentPanel = StyleConstants.createStyledPanel(new BorderLayout(10, 10));
-        
+
         // Add appointments list at the top
         List<Appointment> appointments = DatabaseAccessor.getAppointments(currentUser.getUserID());
         appointments.sort((a, b) -> a.getAppointmentTime().compareTo(b.getAppointmentTime()));
@@ -173,68 +182,86 @@ public class PatientBookingPanel extends JPanel {
             apptListModel.addElement(line);
         }
         JList<String> apptList = new JList<>(apptListModel);
+        // Assuming StyleConstants.NORMAL_FONT provides a readable font
         apptList.setFont(StyleConstants.NORMAL_FONT);
+        // Assuming StyleConstants.WHITE and StyleConstants.TEXT_COLOR provide good contrast
         apptList.setBackground(StyleConstants.WHITE);
-        apptList.setBorder(BorderFactory.createTitledBorder("Your Appointments (Soonest First)"));
+        apptList.setForeground(StyleConstants.TEXT_COLOR);
+        apptList.setBorder(BorderFactory.createTitledBorder("Your Appointments (Soonest First)")); // Border title color might need adjustment
         JScrollPane apptScrollPane = new JScrollPane(apptList);
         apptScrollPane.setPreferredSize(new Dimension(600, 90));
         apptScrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         contentPanel.add(apptScrollPane, BorderLayout.NORTH);
 
         // Doctor search panel
+        // Assuming StyleConstants.createStyledPanel and StyleConstants.createTitledBorder provide styling
         JPanel doctorSearchPanel = StyleConstants.createStyledPanel(new BorderLayout(10, 10));
         doctorSearchPanel.setBorder(StyleConstants.createTitledBorder("Find a Doctor"));
 
         // Search input panel
+        // Assuming StyleConstants.createStyledPanel provides styling
         JPanel searchInputPanel = StyleConstants.createStyledPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        // Assuming StyleConstants.SECONDARY_COLOR provides a color for the border
         searchInputPanel.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createMatteBorder(0, 0, 1, 0, StyleConstants.SECONDARY_COLOR),
             BorderFactory.createEmptyBorder(10, 10, 10, 10)
         ));
-        
+
+        // Assuming StyleConstants.createLabel and StyleConstants.NORMAL_FONT provide good contrast
         JLabel searchLabel = StyleConstants.createLabel("Name or Specialty:", StyleConstants.NORMAL_FONT);
         JTextField searchField = new JTextField(25);
+        // Assuming StyleConstants.styleTextField applies good contrast styling
         StyleConstants.styleTextField(searchField);
-        
+
+        // Assuming StyleConstants.createPrimaryButton and StyleConstants.BUTTON_FONT provide good contrast
         JButton searchButton = StyleConstants.createPrimaryButton("Search");
         searchButton.setPreferredSize(new Dimension(120, 35));
         searchButton.setFont(StyleConstants.BUTTON_FONT);
-        
+
         searchInputPanel.add(searchLabel);
         searchInputPanel.add(searchField);
         searchInputPanel.add(searchButton);
 
         // Doctor list panel
+        // Assuming StyleConstants.createStyledPanel provides styling
         JPanel doctorListPanel = StyleConstants.createStyledPanel(new BorderLayout());
         doctorListPanel.setBorder(BorderFactory.createEmptyBorder(15, 10, 10, 10));
-        
+
         DefaultListModel<Object> doctorListModel = new DefaultListModel<>();
         JList<Object> doctorList = new JList<>(doctorListModel);
         doctorList.setCellRenderer(new DoctorListRenderer());
+        // Assuming StyleConstants colors provide good contrast
         doctorList.setBackground(StyleConstants.WHITE);
-        doctorList.setSelectionBackground(StyleConstants.PRIMARY_COLOR.brighter());
-        doctorList.setSelectionForeground(StyleConstants.WHITE);
+        doctorList.setForeground(StyleConstants.TEXT_COLOR);
+        doctorList.setSelectionBackground(StyleConstants.PRIMARY_COLOR.brighter()); // Verify contrast
+        doctorList.setSelectionForeground(StyleConstants.WHITE); // Verify contrast
+        // Assuming StyleConstants.NORMAL_FONT provides a readable font
         doctorList.setFont(StyleConstants.NORMAL_FONT);
-        
+
         JScrollPane doctorListScrollPane = new JScrollPane(doctorList);
         doctorListScrollPane.setPreferredSize(new Dimension(400, 150));
+        // Assuming StyleConstants.SECONDARY_COLOR provides a color for the border
         doctorListScrollPane.setBorder(BorderFactory.createLineBorder(StyleConstants.SECONDARY_COLOR, 1, true));
-        
+
         // Add components to doctor search panel
         doctorSearchPanel.add(searchInputPanel, BorderLayout.NORTH);
         doctorListPanel.add(doctorListScrollPane, BorderLayout.CENTER);
         doctorSearchPanel.add(doctorListPanel, BorderLayout.CENTER);
 
         // Booking controls panel
+        // Assuming StyleConstants.createSectionPanel provides styling
         JPanel bookingControlsPanel = StyleConstants.createSectionPanel("Appointment Details");
         bookingControlsPanel.setLayout(new BorderLayout(10, 15));
-        
+
+        // Assuming StyleConstants.createStyledPanel provides styling
         JPanel dateTimePanel = StyleConstants.createStyledPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
 
         // Date selection
+        // Assuming StyleConstants.createStyledPanel provides styling
         JPanel datePanel = StyleConstants.createStyledPanel(new BorderLayout(5, 0));
+        // Assuming StyleConstants.createLabel and StyleConstants.NORMAL_FONT provide good contrast
         JLabel dateLabel = StyleConstants.createLabel("Select Date:", StyleConstants.NORMAL_FONT);
-        
+
         SpinnerDateModel dateModel = new SpinnerDateModel();
         dateSpinner = new JSpinner(dateModel);
         dateSpinner.setPreferredSize(new Dimension(120, 28)); // Reduce size
@@ -242,14 +269,17 @@ public class PatientBookingPanel extends JPanel {
         dateEditor = ((JSpinner.DateEditor) dateSpinner.getEditor());
         dateEditor.getTextField().setEditable(false);
         dateEditor.getTextField().setHorizontalAlignment(SwingConstants.CENTER);
+        // Assuming StyleConstants.NORMAL_FONT provides a readable font
         dateEditor.getTextField().setFont(StyleConstants.NORMAL_FONT);
+        // Assuming StyleConstants.WHITE and StyleConstants.INPUT_BORDER provide good contrast
         dateEditor.getTextField().setBackground(StyleConstants.WHITE);
         dateEditor.getTextField().setBorder(StyleConstants.INPUT_BORDER);
+
         dateSpinner.setValue(new Date());
-        
+
         datePanel.add(dateLabel, BorderLayout.WEST);
         datePanel.add(dateSpinner, BorderLayout.CENTER);
-        
+
         // Add change listener to update time slots when date changes
         dateSpinner.addChangeListener(e -> {
             if (selectedDoctor != null) {
@@ -269,60 +299,68 @@ public class PatientBookingPanel extends JPanel {
         });
 
         // Time selection
+        // Assuming StyleConstants.createStyledPanel provides styling
         JPanel timePanel = StyleConstants.createStyledPanel(new BorderLayout(5, 0));
+        // Assuming StyleConstants.createLabel and StyleConstants.NORMAL_FONT provide good contrast
         JLabel timeLabel = StyleConstants.createLabel("Select Time:", StyleConstants.NORMAL_FONT);
-        
+
         timePicker = new JComboBox<>();
+        // Assuming StyleConstants.NORMAL_FONT provides a readable font
         timePicker.setFont(StyleConstants.NORMAL_FONT);
+        // Assuming StyleConstants.WHITE and StyleConstants.INPUT_BORDER provide good contrast
         timePicker.setBackground(StyleConstants.WHITE);
         timePicker.setBorder(StyleConstants.INPUT_BORDER);
         timePicker.setRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                // Assuming StyleConstants.NORMAL_FONT provides a readable font
                 c.setFont(StyleConstants.NORMAL_FONT);
+                // Assuming StyleConstants colors provide good contrast
                 if (isSelected) {
-                    c.setBackground(StyleConstants.PRIMARY_COLOR);
-                    c.setForeground(StyleConstants.WHITE);
+                    c.setBackground(StyleConstants.PRIMARY_COLOR); // Verify contrast
+                    c.setForeground(StyleConstants.WHITE); // Verify contrast
                 } else {
-                    c.setBackground(StyleConstants.WHITE);
-                    c.setForeground(StyleConstants.TEXT_COLOR);
+                    c.setBackground(StyleConstants.WHITE); // Verify contrast
+                    c.setForeground(StyleConstants.TEXT_COLOR); // Verify contrast
                 }
                 return c;
             }
         });
         timePicker.addItem("Select a doctor first");
-        
+
         timePanel.add(timeLabel, BorderLayout.WEST);
         timePanel.add(timePicker, BorderLayout.CENTER);
-        
+
         // Add date and time panels to dateTimePanel
         dateTimePanel.add(datePanel);
         dateTimePanel.add(timePanel);
-        
+
         // Add dateTimePanel to booking controls
         bookingControlsPanel.add(dateTimePanel, BorderLayout.CENTER);
 
         // Center content panel
+        // Assuming StyleConstants.createStyledPanel provides styling
         JPanel centerContentPanel = StyleConstants.createStyledPanel(new BorderLayout(0, 20));
         centerContentPanel.add(doctorSearchPanel, BorderLayout.CENTER);
         centerContentPanel.add(bookingControlsPanel, BorderLayout.SOUTH);
-        
+
         // Add main content to the panel
         mainContentPanel.add(centerContentPanel, BorderLayout.CENTER);
-        
+
         // Add padding around the main content
+        // Assuming StyleConstants.createStyledPanel provides styling
         JPanel wrapperPanel = StyleConstants.createStyledPanel(new BorderLayout());
         wrapperPanel.add(mainContentPanel, BorderLayout.CENTER);
         wrapperPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
-        
+
         contentPanel.add(wrapperPanel, BorderLayout.CENTER);
 
         // Wrap content panel in a scroll pane
         JScrollPane scrollPane = new JScrollPane(contentPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.setBorder(BorderFactory.createEmptyBorder()); // No border for scroll pane itself
 
         // Add scroll pane to the main panel
         add(scrollPane, BorderLayout.CENTER);
@@ -331,14 +369,14 @@ public class PatientBookingPanel extends JPanel {
         searchButton.addActionListener(e -> {
             String searchText = searchField.getText().trim();
             doctorListModel.clear();
-            
+
             if (searchText.isEmpty()) {
                 doctorListModel.addElement("Please enter a search term");
                 return;
             }
-            
+
             List<Doctor> foundDoctors = DatabaseAccessor.searchDoctors(searchText);
-            
+
             if (foundDoctors.isEmpty()) {
                 doctorListModel.addElement("No doctors found matching: " + searchText);
             } else {
@@ -373,11 +411,13 @@ public class PatientBookingPanel extends JPanel {
         // Date spinner change listener is already set up in the initialization
 
         // Booking confirmation button
+        // Assuming StyleConstants.createStyledPanel provides styling
         JPanel buttonPanel = StyleConstants.createStyledPanel(new FlowLayout(FlowLayout.CENTER));
+        // Assuming StyleConstants.createPrimaryButton provides good contrast
         JButton bookingButton = StyleConstants.createPrimaryButton("Book Appointment");
         bookingButton.setPreferredSize(new Dimension(180, 40));
         buttonPanel.add(bookingButton);
-        contentPanel.add(buttonPanel, BorderLayout.SOUTH);
+        contentPanel.add(buttonPanel, BorderLayout.SOUTH); // Add button panel to contentPanel
         bookingButton.addActionListener(e -> {
             String selectedTimeSlot = (String) timePicker.getSelectedItem();
             Date selectedDate = (Date) dateSpinner.getValue();

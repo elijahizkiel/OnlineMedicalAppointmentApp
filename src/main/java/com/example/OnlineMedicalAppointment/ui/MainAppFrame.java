@@ -169,6 +169,7 @@ public class MainAppFrame extends JFrame {
         
         // Update position on resize
         addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 geminiButton.setBounds(
                     getWidth() - buttonSize - margin,

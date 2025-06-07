@@ -55,22 +55,23 @@ public class PatientHomePanel extends JPanel {
         setBackground(LIGHT_BG);
         setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Create a main content panel with padding
-        JPanel contentPanel = createStyledPanel(new BorderLayout(0, 20));
-        contentPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        // Main vertical content panel for all content
+        JPanel verticalPanel = new JPanel();
+        verticalPanel.setLayout(new javax.swing.BoxLayout(verticalPanel, javax.swing.BoxLayout.Y_AXIS));
+        verticalPanel.setBackground(LIGHT_BG);
+        verticalPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         // Welcome title
         JLabel titleLabel = new JLabel("Welcome, " + currentUser.getFName() + "!");
         titleLabel.setFont(TITLE_FONT);
         titleLabel.setForeground(TEXT_COLOR);
         titleLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
-        contentPanel.add(titleLabel, BorderLayout.NORTH);
+        verticalPanel.add(titleLabel);
 
-        // Create cards panel with grid layout
+        // Cards panel
         JPanel cardsPanel = new JPanel(new GridLayout(0, 2, 20, 20));
         cardsPanel.setOpaque(false);
 
-        // Appointment card
         JPanel appointmentCard = createCard("Upcoming Appointments", "View and manage your appointments", "calendar-icon");
         appointmentCard.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         appointmentCard.addMouseListener(new MouseAdapter() {
@@ -81,7 +82,6 @@ public class PatientHomePanel extends JPanel {
         });
         cardsPanel.add(appointmentCard);
 
-        // Doctors card
         JPanel doctorsCard = createCard("Find Doctors", "Search and book appointments with specialists", "doctor-icon");
         doctorsCard.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         doctorsCard.addMouseListener(new MouseAdapter() {
@@ -92,7 +92,6 @@ public class PatientHomePanel extends JPanel {
         });
         cardsPanel.add(doctorsCard);
 
-        // Messages card
         JPanel messagesCard = createCard("Messages", "Communicate with your healthcare providers", "messages-icon");
         messagesCard.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         messagesCard.addMouseListener(new MouseAdapter() {
@@ -103,38 +102,45 @@ public class PatientHomePanel extends JPanel {
         });
         cardsPanel.add(messagesCard);
 
-        contentPanel.add(cardsPanel, BorderLayout.CENTER);
+        cardsPanel.setAlignmentX(LEFT_ALIGNMENT);
+        verticalPanel.add(cardsPanel);
 
-        // Wrap contentPanel in a scroll pane for vertical scrolling
-        JScrollPane scrollPane = new JScrollPane(contentPanel);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        add(scrollPane, BorderLayout.CENTER);
-
-        // Show appointment status
-        JLabel appointmentStatusLabel;
+        // Appointment status
         List<Appointment> appointments = DatabaseAccessor.getAppointments(currentUser.getUserID());
+        JLabel appointmentStatusLabel;
         if (appointments != null && !appointments.isEmpty()) {
             appointmentStatusLabel = new JLabel("You have upcoming appointments.");
         } else {
             appointmentStatusLabel = new JLabel("You have no upcoming appointments.");
         }
-        add(appointmentStatusLabel, BorderLayout.SOUTH);
+        appointmentStatusLabel.setFont(NORMAL_FONT);
+        appointmentStatusLabel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
+        appointmentStatusLabel.setAlignmentX(LEFT_ALIGNMENT);
+        verticalPanel.add(appointmentStatusLabel);
 
         // Available Doctors
         List<Doctor> sampleDoctors = DatabaseAccessor.getDoctors();
         if (sampleDoctors != null && !sampleDoctors.isEmpty()) {
             for (Doctor doctor : sampleDoctors) {
                 JLabel doctorLabel = new JLabel(
-                    "Dr. " + doctor.getFName() + " - " + doctor.getSpecialty() + " - Hours: " + "08:00AM - 05:30PM" );
-                doctorLabel.setAlignmentX(LEFT_ALIGNMENT); // Align left
-                add(doctorLabel, BorderLayout.SOUTH);
+                    "Dr. " + doctor.getFName() + " - " + doctor.getSpecialty() + " - Hours: 08:00AM - 05:30PM");
+                doctorLabel.setFont(NORMAL_FONT);
+                doctorLabel.setAlignmentX(LEFT_ALIGNMENT);
+                verticalPanel.add(doctorLabel);
             }
         } else {
             JLabel noDoctorsLabel = new JLabel("No sample doctors available at the moment.");
-            add(noDoctorsLabel, BorderLayout.SOUTH);
+            noDoctorsLabel.setFont(NORMAL_FONT);
+            noDoctorsLabel.setAlignmentX(LEFT_ALIGNMENT);
+            verticalPanel.add(noDoctorsLabel);
         }
+
+        // Wrap verticalPanel in a scroll pane for full scrollability
+        JScrollPane scrollPane = new JScrollPane(verticalPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        add(scrollPane, BorderLayout.CENTER);
     }
 
     // Helper method to create cards
