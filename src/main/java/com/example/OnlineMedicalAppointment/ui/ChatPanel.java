@@ -1,139 +1,189 @@
 package com.example.OnlineMedicalAppointment.ui;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
+
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
+import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
+import com.example.OnlineMedicalAppointment.model.ChatRoom;
 import com.example.OnlineMedicalAppointment.model.Message;
 import com.example.OnlineMedicalAppointment.model.User;
-import com.example.OnlineMedicalAppointment.database.DatabaseAccessor;
 
 /**
- * Panel for displaying and sending messages between two users (Patient and Doctor).
- * This panel is designed to be used by both user types.
+ * Panel for patient chat functionality.
+ * Allows patients to view chat rooms and send messages to doctors.
+ * Note: This panel is superseded by the generic ChatPanel.
  */
 public class ChatPanel extends JPanel {
 
     private final User currentUser;
-    private final User otherUser;
-    private final String chatRoomId;
-    private final JTextArea messageArea;
-    private final JTextField messageInput;
-    private final JButton sendButton;
-    private final JButton refreshButton;
+    private ChatRoom selectedChatRoom = null;
+    private final JTextArea messagesDisplayArea;
+    private final JTextField messageInputField;
 
-    private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
-
-    /**
-     * Constructs the ChatPanel for a chat between the current user and another user.
-     * @param currentUser The user currently viewing the chat.
-     * @param otherUser The other user in the chat (the recipient/sender).
-     */
-    public ChatPanel(User currentUser, User otherUser) {
-        this.currentUser = currentUser;
-        this.otherUser = otherUser;
-        // Get or create the chat room ID between the two users
-        this.chatRoomId = DatabaseAccessor.getChatRoomIdBetweenUsers(currentUser.getUserID(), otherUser.getUserID());
-
-        setLayout(new BorderLayout(10, 10));
-        setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
+    public ChatPanel(User user) {
+        this.currentUser = user;
+        setLayout(new BorderLayout());
+        setBackground(StyleConstants.LIGHT_BG);
+        setBorder(BorderFactory.createEmptyBorder(10, 15, 15, 15));
+        
         // Title
-        JLabel title = new JLabel("Chat with " + otherUser.getFName() + " " + otherUser.getLName());
-        title.setFont(new Font("Arial", Font.BOLD, 18));
-        add(title, BorderLayout.NORTH);
+        JLabel titleLabel = StyleConstants.createLabel("Chat with Doctors", StyleConstants.TITLE_FONT);
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        add(titleLabel, BorderLayout.NORTH);
+        
+        JPanel chatListPanel = StyleConstants.createStyledPanel(new BorderLayout());
+        chatListPanel.setBorder(StyleConstants.createTitledBorder("Chat Rooms"));
+        // Create a scrollable panel for chat rooms
+        JPanel scrollableChatRooms = new JPanel();
+        scrollableChatRooms.setLayout(new BoxLayout(scrollableChatRooms, BoxLayout.Y_AXIS));
+        
+        List<String> chatRoomIDs = DatabaseAccessor.getChatRoomID(currentUser.getUserID());
+        //display empty list
+        if(chatRoomIDs.isEmpty()) {
+            JLabel noChatRoomsLabel = StyleConstants.createLabel("No chat available. " +
+                "Start chatting by with others by chatting!", StyleConstants.NORMAL_FONT);
+            noChatRoomsLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            chatListPanel.add(noChatRoomsLabel, BorderLayout.CENTER);
+        }else {
+            for ( int i = 0;i < chatRoomIDs.size(); i++) {
+            String chatRoomID = chatRoomIDs.get(i);
+            // For each chat room ID, create a ChatRoom object
+            System.out.println("ChatRoom from ChatPanel: " + chatRoomID);
+            if (chatRoomID == null || chatRoomID.isEmpty()) {
+                continue; // Skip if chat room ID is null or empty
+            }
+            final ChatRoom chatRoom = new ChatRoom(chatRoomID, currentUser);
+            // Create a label for each chat room
+            JLabel roomLabel = StyleConstants.createLabel(chatRoom.getChatRoomName(), StyleConstants.NORMAL_FONT);
+            roomLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+            
+            // Add mouse listener to handle chat room selection
+            roomLabel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 1) {
+                        selectedChatRoom = chatRoom;
+                        updateMessagesPanel(selectedChatRoom);
+                    }
+                }
+            });
+            scrollableChatRooms.add(roomLabel);
+        }
+    }
+        
+        JScrollPane chatRoomsScrollPane = new JScrollPane(scrollableChatRooms);
+        chatRoomsScrollPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        chatListPanel.add(chatRoomsScrollPane, BorderLayout.CENTER);
 
-        // Message display area
-        messageArea = new JTextArea();
-        messageArea.setEditable(false);
-        messageArea.setLineWrap(true);
-        messageArea.setWrapStyleWord(true);
-        messageArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        JScrollPane scrollPane = new JScrollPane(messageArea);
-        add(scrollPane, BorderLayout.CENTER);
+        JPanel messagePanel = StyleConstants.createStyledPanel(new BorderLayout());
+        messagePanel.setBorder(StyleConstants.createTitledBorder("Messages"));
+        JLabel messagesTitle = StyleConstants.createLabel("Messages", StyleConstants.SUBTITLE_FONT);
+        messagesTitle.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        messagePanel.add(messagesTitle, BorderLayout.NORTH);
 
-        // Input panel
-        JPanel inputPanel = new JPanel(new BorderLayout(5, 0));
-        messageInput = new JTextField();
-        sendButton = new JButton("Send");
-        refreshButton = new JButton("Refresh");
+        // Create scrollable text area for displaying messages
+        messagesDisplayArea = new JTextArea(10, 30);
+        messagesDisplayArea.setEditable(false);
+        messagesDisplayArea.setBackground(StyleConstants.LIGHT_BG);
+        messagesDisplayArea.setFont(StyleConstants.NORMAL_FONT);
+        
+        JScrollPane messagesScrollPane = new JScrollPane(messagesDisplayArea);
+        messagesScrollPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        messagePanel.add(messagesScrollPane, BorderLayout.CENTER);
 
-        inputPanel.add(messageInput, BorderLayout.CENTER);
+        // Create input panel for message input and send button
+        JPanel inputPanel = new JPanel(new BorderLayout());
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+        // Create text field for writing messages
+        messageInputField = new JTextField(30);
+        messageInputField.setFont(StyleConstants.NORMAL_FONT);
+        messageInputField.setBorder(BorderFactory.createTitledBorder("Write a message"));
+        inputPanel.add(messageInputField, BorderLayout.CENTER);
+
+        // Create send button
+        JButton sendButton = new JButton("Send");
+        sendButton.setFont(StyleConstants.NORMAL_FONT);
+        sendButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                sendMessage();
+            }
+        });
         inputPanel.add(sendButton, BorderLayout.EAST);
-        inputPanel.add(refreshButton, BorderLayout.WEST); // Added refresh button to input panel
 
-        add(inputPanel, BorderLayout.SOUTH);
+        messagePanel.add(inputPanel, BorderLayout.SOUTH);
 
-        // Add action listeners
-        sendButton.addActionListener(new SendButtonListener());
-        messageInput.addActionListener(new SendButtonListener()); // Send on Enter key
-        refreshButton.addActionListener(e -> loadMessages());
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, chatListPanel, messagePanel);
+        splitPane.setResizeWeight(0.3); // Give 30% to the left side (chat list)
+        splitPane.setBackground(StyleConstants.SECONDARY_COLOR);
+        splitPane.setDividerSize(2);
 
-        // Load initial messages
-        loadMessages();
+        // Add main content with padding
+        JPanel wrapperPanel = StyleConstants.createStyledPanel(new BorderLayout());
+        wrapperPanel.add(splitPane, BorderLayout.CENTER);
+        wrapperPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
+        
+        add(wrapperPanel, BorderLayout.CENTER);
     }
 
-    /**
-     * Loads messages for the current chat room and updates the display.
-     */
-    private void loadMessages() {
-        messageArea.setText(""); // Clear current messages
-        List<Message> messages = DatabaseAccessor.getMessages(chatRoomId);
-
-        if (messages == null || messages.isEmpty()) {
-            messageArea.setText("No messages yet. Start the conversation!");
-        } else {
-            for (Message msg : messages) {
-                String senderName = (msg.getSenderId() == currentUser.getUserID()) ? "You" : msg.getSenderName();
-                String display = String.format("[%s] %s: %s\n",
-                        msg.getTimestamp().toLocalDateTime().toLocalDate().format(TIMESTAMP_FORMATTER),
-                        senderName,
-                        msg.getMessage());
-                messageArea.append(display);
-            }
-        }
-         // Scroll to the bottom
-        messageArea.setCaretPosition(messageArea.getDocument().getLength());
-    }
-
-    /**
-     * ActionListener for the send button and message input field.
-     */
-    private class SendButtonListener implements ActionListener {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            sendMessage();
+    private void updateMessagesPanel(ChatRoom chatRoom) {
+        messagesDisplayArea.setText("");
+        
+        List<Message> messages = chatRoom.getMessages();
+        for (Message message : messages) {
+            String messageText = String.format("%s: %s\n", 
+                message.getSenderName(), 
+                message.getMessage());
+            messagesDisplayArea.append(messageText);
         }
     }
 
-    /**
-     * Sends the message from the input field.
-     */
     private void sendMessage() {
-        String text = messageInput.getText().trim();
-        if (!text.isEmpty()) {
-            // Create a new message object
-            Message newMessage = new Message(
-                    0, // ID will be generated by DB
-                    chatRoomId,
-                    currentUser.getUserID(),
-                    otherUser.getUserID(),
-                    text,
-                    java.sql.Timestamp.valueOf(LocalDateTime.now())
-            );
+        if (selectedChatRoom == null) {
+            JOptionPane.showMessageDialog(this, "Please select a chat room first.", "No Chat Room Selected", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-            // Add message to database
-            boolean success = DatabaseAccessor.addMessage(newMessage);
+        String messageText = messageInputField.getText().trim();
+        if (messageText.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please enter a message.", "Empty Message", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-            if (success) {
-                messageInput.setText(""); // Clear input field
-                loadMessages(); // Refresh message display
-            } else {
-                JOptionPane.showMessageDialog(this, "Failed to send message.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
+        // Create and send the message
+        Message newMessage = new Message(
+            null, // id will be set by database
+            currentUser.getUserID(), 
+            selectedChatRoom.getChattingWith().getUserID(), 
+            String.valueOf(selectedChatRoom.getChatRoomID()),
+            currentUser.getFName() + " " + currentUser.getLName(),
+            selectedChatRoom.getChattingWith().getFName() + " " + selectedChatRoom.getChattingWith().getLName(),
+            messageText
+        );
+        
+        if (DatabaseAccessor.addMessage(newMessage)) {
+            messageInputField.setText(""); // Clear the input field
+            updateMessagesPanel(selectedChatRoom); // Refresh messages
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to send message. Please try again.", "Send Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

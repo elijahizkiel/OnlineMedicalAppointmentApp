@@ -83,26 +83,26 @@ public class MainAppFrame extends JFrame {
     private void setupTabs() {
         String userType = currentUser.getUserType();
         switch (userType) {
-            case "Patient": {
+            case "Patient" -> {
                 tabbedPane.addTab("Home", new PatientHomePanel(currentUser));
                 tabbedPane.addTab("Booking", new PatientBookingPanel(currentUser));
-                tabbedPane.addTab("Chat-Room", new PatientChatPanel(currentUser));
+                tabbedPane.addTab("Chat-Room", new ChatPanel(currentUser));
                 break;
             }
-            case "Doctor": {
+            case "Doctor" ->{
                 tabbedPane.addTab("Home", new DoctorHomePanel(currentUser));
                 tabbedPane.addTab("Schedule", new DoctorSchedulePanel(currentUser));
-                tabbedPane.addTab("Chat-Room", new DoctorChatPanel(currentUser));
+                tabbedPane.addTab("Chat-Room", new ChatPanel(currentUser));
                 break;
             }
-            case "Admin": {
+            case "Admin" -> {
                 tabbedPane.addTab("Dashboard", new AdminDashboardPanel(currentUser));
                 tabbedPane.addTab("System Activity", new SystemActivityPanel());
                 tabbedPane.addTab("User Management", new UserManagementPanel());
                 break;
             }
             // Admin might also need a list of doctors/users tab
-            default: // Handle unknown user type or show a default view
+            default -> // Handle unknown user type or show a default view
                 tabbedPane.addTab("Welcome", new JPanel()); // Placeholder
         }
     }
