@@ -488,7 +488,7 @@ public abstract class DatabaseAccessor {
                     roomIds.add(rs.getString("roomID"));
                 }
             }
-            roomIds.removeFirst();
+            if(!roomIds.isEmpty()) roomIds.removeFirst();
         } catch (SQLException e) {
             System.out.println("SQL Exception thrown while getting chat room IDs: " + e.getMessage());
             return new ArrayList<>(); // Return empty list on error

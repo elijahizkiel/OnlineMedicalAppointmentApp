@@ -86,6 +86,19 @@
             <url>https://repo1.maven.org/maven2/</url>
         </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>openjfx-repo</id>
+            <url>https://repo.openjfx.io/maven2/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+
     <build>
         <plugins>
 
@@ -137,7 +150,35 @@
                     <reportOutputDirectory>${project.build.directory}/javadoc</reportOutputDirectory>
                 </configuration>
             </plugin>
-    
+            <plugin>
+                <groupId>org.openjfx</groupId>
+                <artifactId>jpackage-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <id>create-installer</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jpackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <name>OnlineMedicalAppointment</name>
+                    <vendor>YourCompany</vendor>
+                    <appVersion>1.0</appVersion>
+                    <mainClass>com.example.OnlineMedicalAppointment.App</mainClass>
+                    <winConsole>true</winConsole>
+                    <winDirChooser>true</winDirChooser>
+                    <winMenu>true</winMenu>
+                    <winShortcut>true</winShortcut>
+                    <runtimeImage>${java.home}</runtimeImage>
+                    <jpackageHome>${java.home}</jpackageHome>
+                    <dest>${project.build.directory}/installer</dest>
+                    <module>com.example.OnlineMedicalAppointment</module>
+                    <modulePath>${project.build.directory}/modules</modulePath>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
