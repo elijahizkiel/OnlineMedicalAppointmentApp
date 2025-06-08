@@ -31,7 +31,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>com.example.OnlineMedicalAppointment.App</mainClass>
+              <mainClass>com.example.OnlineMedicalAppointment.Main</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -56,7 +56,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.example.OnlineMedicalAppointment.App</mainClass>
+                  <mainClass>com.example.OnlineMedicalAppointment.Main</mainClass>
                 </transformer>
               </transformers>
               <filters>
