@@ -36,17 +36,28 @@ public class ChatPanel extends JPanel {
     private final JTextArea messagesDisplayArea;
     private final JTextField messageInputField;
 
+    private JTextField searchField;
+    private JButton searchButton;
+    private JPanel searchResultPanel;
+
     public ChatPanel(User user) {
         this.currentUser = user;
         setLayout(new BorderLayout());
         setBackground(StyleConstants.LIGHT_BG);
         setBorder(BorderFactory.createEmptyBorder(10, 15, 15, 15));
-        
-        // Title
-        JLabel titleLabel = StyleConstants.createLabel("Chat with Doctors", StyleConstants.TITLE_FONT);
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        add(titleLabel, BorderLayout.NORTH);
+
+        // Search bar panel
+        JPanel searchPanel = new JPanel(new BorderLayout(5, 5));
+        searchField = new JTextField();
+        searchButton = new JButton("Search User");
+        searchPanel.add(searchField, BorderLayout.CENTER);
+        searchPanel.add(searchButton, BorderLayout.EAST);
+        add(searchPanel, BorderLayout.NORTH);
+
+        // Panel to show search results
+        searchResultPanel = new JPanel();
+        searchResultPanel.setLayout(new BoxLayout(searchResultPanel, BoxLayout.Y_AXIS));
+        add(searchResultPanel, BorderLayout.WEST);
         
         JPanel chatListPanel = StyleConstants.createStyledPanel(new BorderLayout());
         chatListPanel.setBorder(StyleConstants.createTitledBorder("Chat Rooms"));
@@ -56,6 +67,7 @@ public class ChatPanel extends JPanel {
         
         List<String> chatRoomIDs = DatabaseAccessor.getChatRoomID(currentUser.getUserID());
         //display empty list
+        System.out.println("ChatRoomIDs from ChatPanel: " + chatRoomIDs);
         if(chatRoomIDs.isEmpty()) {
             JLabel noChatRoomsLabel = StyleConstants.createLabel("No chat available. " +
                 "Start chatting by with others by chatting!", StyleConstants.NORMAL_FONT);
@@ -142,6 +154,70 @@ public class ChatPanel extends JPanel {
         wrapperPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
         
         add(wrapperPanel, BorderLayout.CENTER);
+
+        // Add search logic
+        searchButton.addActionListener(e -> {
+            String query = searchField.getText().trim();
+            searchResultPanel.removeAll();
+            if (query.isEmpty()) {
+                searchResultPanel.add(new JLabel("Enter a username or name to search."));
+                searchResultPanel.revalidate();
+                searchResultPanel.repaint();
+                return;
+            }
+            // searchResultPanel.removeAll();
+            // Search users by username or name (excluding self)
+            List<User> foundUsers = DatabaseAccessor.getUsersByNameOrUsername(query);
+            if (foundUsers.isEmpty()) {
+                searchResultPanel.add(new JLabel("No users found."));
+            } else {
+                for (User found : foundUsers) {
+                    JPanel userPanel = new JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
+                    userPanel.add(new JLabel(found.getFName() + " " + found.getLName() + " (" + found.getUsername() + ")"));
+                    JButton chatBtn = new JButton("Chat");
+                    chatBtn.addActionListener(ev -> {
+                        // Create or get chat room
+                        String chatRoomId = com.example.OnlineMedicalAppointment.database.DatabaseAccessor.getChatRoomIdBetweenUsers(currentUser.getUserID(), found.getUserID());
+                        // Open the chat room by selecting it
+                        ChatRoom newChatRoom = new ChatRoom(chatRoomId, currentUser);
+                        selectedChatRoom = newChatRoom;
+                        updateMessagesPanel(selectedChatRoom);
+
+                        // Hide search result panel
+                        searchResultPanel.setVisible(false);
+
+                        // Add the new chat room to the chat rooms list panel if not already present
+                        boolean alreadyExists = false;
+                        for (java.awt.Component comp : scrollableChatRooms.getComponents()) {
+                            if (comp instanceof JLabel label && label.getText().equals(newChatRoom.getChatRoomName())) {
+                                alreadyExists = true;
+                                break;
+                            }
+                        }
+                        if (!alreadyExists) {
+                            JLabel roomLabel = StyleConstants.createLabel(newChatRoom.getChatRoomName(), StyleConstants.NORMAL_FONT);
+                            roomLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+                            roomLabel.addMouseListener(new MouseAdapter() {
+                                @Override
+                                public void mouseClicked(MouseEvent e) {
+                                    if (e.getClickCount() == 1) {
+                                        selectedChatRoom = newChatRoom;
+                                        updateMessagesPanel(selectedChatRoom);
+                                    }
+                                }
+                            });
+                            scrollableChatRooms.add(roomLabel);
+                            scrollableChatRooms.revalidate();
+                            scrollableChatRooms.repaint();
+                        }
+                    });
+                    userPanel.add(chatBtn);
+                    searchResultPanel.add(userPanel);
+                }
+            }
+            searchResultPanel.revalidate();
+            searchResultPanel.repaint();
+        });
     }
 
     private void updateMessagesPanel(ChatRoom chatRoom) {

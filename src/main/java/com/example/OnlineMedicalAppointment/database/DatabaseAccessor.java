@@ -331,6 +331,7 @@ public abstract class DatabaseAccessor {
     public static List<Message> getMessages(String roomId){
         String sql = "SELECT * FROM messages WHERE roomID = ? ORDER BY timestamp ASC"; // Added ORDER BY
         List<Message> messages = new ArrayList<>();
+        System.out.println("Getting messages for room ID: " + roomId);
         try (Connection conn = DatabaseConnector.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, roomId);
@@ -366,7 +367,7 @@ public abstract class DatabaseAccessor {
                         message.setReceiverName("Unknown Receiver");
                     }
                     receiverNameRs.close(); // Close the inner ResultSet
-
+                    System.out.println("Message added: " + message.toString());
                     messages.add(message);
                 }
             }
@@ -488,7 +489,7 @@ public abstract class DatabaseAccessor {
                     roomIds.add(rs.getString("roomID"));
                 }
             }
-            if(!roomIds.isEmpty()) roomIds.removeFirst();
+            if(!roomIds.isEmpty() && (roomIds.getFirst() == "0")){ roomIds.removeFirst();} // Remove the first element if it is "0"
         } catch (SQLException e) {
             System.out.println("SQL Exception thrown while getting chat room IDs: " + e.getMessage());
             return new ArrayList<>(); // Return empty list on error
@@ -507,7 +508,7 @@ public abstract class DatabaseAccessor {
      */
     public static String getChatRoomIdBetweenUsers(int userId1, int userId2) {
         // Ensure consistent room ID regardless of which user is userId1 or userId2
-        String roomIdentifier = (userId1 < userId2) ? userId1 + "_" + userId2 : userId2 + "_" + userId1;
+        String roomIdentifier = (userId1 < userId2) ? userId1 + "-" + userId2 : userId2 + "-" + userId1;
 
         // In a real database, you might have a dedicated chat_rooms table
         // and look up the room ID there, creating it if it doesn't exist.
@@ -732,6 +733,55 @@ public abstract class DatabaseAccessor {
         return null;
     }
 
+    public static List<User> getUsersByNameOrUsername(String userName){
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT * FROM users_table WHERE FName LIKE ? OR LName LIKE ? OR username LIKE ?";
+        try (Connection conn = DatabaseConnector.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            String searchPattern = "%" + userName + "%";
+            pstmt.setString(1, searchPattern);
+            pstmt.setString(2, searchPattern);
+            pstmt.setString(3, searchPattern);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                User user;
+                if (rs.getString("userType").equals("Patient")) {
+                    user = new Patient(
+                        rs.getInt("userID"),
+                        rs.getString("FName"),
+                        rs.getString("LName"),
+                        rs.getString("username"),
+                        rs.getString("userType"),
+                        rs.getString("phoneNumber")
+                    );
+                } else if (rs.getString("userType").equals("Doctor")) {
+                    user = new Doctor(
+                        rs.getInt("userID"),
+                        rs.getString("FName"),
+                        rs.getString("LName"),
+                        rs.getString("username"),
+                        rs.getString("password"),
+                        rs.getString("userType"),
+                        rs.getString("specialty"),
+                        rs.getString("phoneNumber")
+                    );
+                } else {
+                    continue; // Skip unsupported user types
+                }
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error retrieving users by name or username: " + e.getMessage());
+        }
+        return users;
+    }
+
+    /**
+     * Retrieves a list of users by their type (e.g., "Patient", "Doctor").
+     *
+     * @param type the user type to filter by
+     * @return list of users of the specified type
+     */
     public static List<User> getUsersByType(String type){
         List<User> users = new ArrayList<>();
         String sql = "SELECT * FROM users_table WHERE userType = ?";
