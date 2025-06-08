@@ -1,18 +1,43 @@
 package com.example.OnlineMedicalAppointment.ui;
 
-import com.example.OnlineMedicalAppointment.model.User;
+import java.awt.BorderLayout;
+import java.awt.Color;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+
+import com.example.OnlineMedicalAppointment.model.Admin;
 import com.example.OnlineMedicalAppointment.model.Doctor;
-import com.example.OnlineMedicalAppointment.model.Patient;  
-// import com.example.OnlineMedicalAppointment.model.Admin;    
+import com.example.OnlineMedicalAppointment.model.Patient;
+import com.example.OnlineMedicalAppointment.model.User;
 
-import javax.swing.*;
-import java.awt.*;
-
+/**
+ * The main application frame for the Online Medical Appointment system.
+ * This frame adapts its content (tabs and menu options) based on the type of the logged-in user (Patient, Doctor, or Admin).
+ */
 public class MainAppFrame extends JFrame {
 
     private User currentUser;
     private final JTabbedPane tabbedPane;
+    private JButton geminiButton;
 
+    /**
+     * Constructs the main application frame for a given user.
+     * Initializes the frame properties, sets the current user, and sets up the UI components
+     * including tabs and the menu bar based on the user's type.
+     *
+     * @param user The user object representing the currently logged-in user.
+     */
     public MainAppFrame(User user) {
         String userType = user.getUserType();
         switch (userType) {
@@ -23,7 +48,7 @@ public class MainAppFrame extends JFrame {
             this.currentUser = (Patient) user;
             break;
             case "Admin":
-            // this.currentUser = (Admin) user;
+            this.currentUser = (Admin) user;
             break;
             default:
             // Handle unknown user type, maybe throw an exception or log a warning
@@ -46,31 +71,46 @@ public class MainAppFrame extends JFrame {
 
         // Setup Menu Bar for Profile and Logout
         setupMenuBar();
+
+        // Add Gemini floating button
+        createFloatingButton();
     }
 
+    /**
+     * Sets up the tabs in the JTabbedPane based on the current user's type.
+     * Different user types (Patient, Doctor, Admin) will see different sets of tabs.
+     */
     private void setupTabs() {
         String userType = currentUser.getUserType();
         switch (userType) {
-            case "Patient": {
+            case "Patient" -> {
                 tabbedPane.addTab("Home", new PatientHomePanel(currentUser));
                 tabbedPane.addTab("Booking", new PatientBookingPanel(currentUser));
-                tabbedPane.addTab("Chat-Room", new PatientChatPanel(currentUser));
+                tabbedPane.addTab("Chat-Room", new ChatPanel(currentUser));
                 break;
             }
-            case "Doctor": {
+            case "Doctor" ->{
                 tabbedPane.addTab("Home", new DoctorHomePanel(currentUser));
                 tabbedPane.addTab("Schedule", new DoctorSchedulePanel(currentUser));
+                tabbedPane.addTab("Chat-Room", new ChatPanel(currentUser));
                 break;
             }
-            case "Admin":
+            case "Admin" -> {
                 tabbedPane.addTab("Dashboard", new AdminDashboardPanel(currentUser));
+                tabbedPane.addTab("System Activity", new SystemActivityPanel());
+                tabbedPane.addTab("User Management", new UserManagementPanel());
                 break;
+            }
             // Admin might also need a list of doctors/users tab
-            default: // Handle unknown user type or show a default view
+            default -> // Handle unknown user type or show a default view
                 tabbedPane.addTab("Welcome", new JPanel()); // Placeholder
         }
     }
 
+    /**
+     * Sets up the menu bar for the frame.
+     * Includes a user menu displaying the current user's name with options for viewing the profile and logging out.
+     */
     private void setupMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         JMenu userMenu = new JMenu(currentUser.getFName() + " " + currentUser.getLName()); // Human Avatar/User Name
@@ -98,5 +138,62 @@ public class MainAppFrame extends JFrame {
         menuBar.add(userMenu);
 
         setJMenuBar(menuBar);
+    }
+
+    private void createFloatingButton() {
+        geminiButton = new JButton("Gemini");
+        geminiButton.setBackground(Color.BLUE);
+        geminiButton.setForeground(Color.BLUE);
+        geminiButton.setFont(StyleConstants.NORMAL_FONT);
+        geminiButton.setFocusPainted(false);
+        geminiButton.setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 20)); // Wider padding for full text
+
+        // Set preferred size to fit all letters and minimum height
+        int buttonWidth = 120; // Wide enough for "Gemini"
+        int buttonHeight = 32; // Minimum height
+        geminiButton.setPreferredSize(new java.awt.Dimension(buttonWidth, buttonHeight));
+        geminiButton.setMinimumSize(new java.awt.Dimension(80, buttonHeight));
+        geminiButton.setMaximumSize(new java.awt.Dimension(200, 40));
+
+        int margin = 40;
+        geminiButton.setBounds(
+            getWidth() - buttonWidth - margin,
+            getHeight() - buttonHeight - margin,
+            buttonWidth,
+            buttonHeight
+        );
+
+        geminiButton.addActionListener(e -> {
+            // Open Gemini chat dialog
+            openGeminiChat();
+        });
+
+        // Add to layered pane so it floats above content
+        JLayeredPane layeredPane = getLayeredPane();
+        layeredPane.add(geminiButton, JLayeredPane.POPUP_LAYER);
+
+        // Update position on resize
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                geminiButton.setBounds(
+                    getWidth() - buttonWidth - margin,
+                    getHeight() - buttonHeight - margin,
+                    buttonWidth,
+                    buttonHeight
+                );
+            }
+        });
+    }
+
+    private void openGeminiChat() {
+        JDialog dialog = new JDialog(this, "I Assistant", false);
+        dialog.setSize(500, 600);
+        dialog.setLocationRelativeTo(this);
+        
+        GeminiChatPanel chatPanel = new GeminiChatPanel(currentUser);
+        dialog.add(chatPanel);
+        
+        dialog.setVisible(true);
     }
 }

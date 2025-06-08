@@ -4,10 +4,19 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * Utility class for managing database connections.
+ * Provides methods to connect to and retrieve the SQLite database connection.
+ */
 public class DatabaseConnector {
     private static final String DB_URL = "jdbc:sqlite:online_medical_appointment.db";
     private static  Connection connection;
 
+    /**
+     * Establishes a new connection to the SQLite database.
+     * @return the database connection
+     * @throws SQLException if a database access error occurs
+     */
     public static Connection connect() throws SQLException {
         Connection conn = null;
         try {
@@ -22,6 +31,11 @@ public class DatabaseConnector {
         connection = conn;
         return conn;
     }
+    /**
+     * Gets the current database connection, or creates a new one if needed.
+     * @return the database connection
+     * @throws SQLException if a database access error occurs
+     */
     public static Connection getConnection() throws SQLException {
         
         if (connection == null || connection.isClosed()) { // Check if connection is null or closed
@@ -30,6 +44,10 @@ public class DatabaseConnector {
         return connection;
     }
 
+    /**
+     * Closes the given database connection.
+     * @param conn the connection to close
+     */
     public static void close(Connection conn) {
         if (conn != null) {
             try {

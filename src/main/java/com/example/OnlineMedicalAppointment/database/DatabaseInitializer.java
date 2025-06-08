@@ -4,8 +4,16 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * Utility class for initializing the database schema.
+ * Creates necessary tables if they do not already exist.
+ */
 public class DatabaseInitializer {
 
+    /**
+     * Initializes the database tables if they do not exist.
+     * @param connection the database connection
+     */
     public static void initializeDatabase(Connection connection) {
         try {
             Statement statement = connection.createStatement();
@@ -27,6 +35,7 @@ public class DatabaseInitializer {
             String createMessagesTableSQL = "CREATE TABLE IF NOT EXISTS Messages (" +
                     "messageID INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "senderID INTEGER NOT NULL," +
+                    "roomID STRING NOT NULL," +
                     "receiverID INTEGER NOT NULL," +
                     "messageText TEXT NOT NULL," +
                     "timestamp DATETIME DEFAULT CURRENT_TIMESTAMP," +
@@ -40,7 +49,8 @@ public class DatabaseInitializer {
                     "scheduleID INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "patientID INTEGER NOT NULL," +
                     "doctorID INTEGER NOT NULL," +
-                    "appointmentTime DATETIME NOT NULL," +
+                    "bookedOn TIMESTAMP NOT NULL," +
+                    "appointmentTime TIMESTAMP NOT NULL," +
                     "status TEXT CHECK (status IN ('Pending','Approved', 'Rejected', 'Cancelled', 'Held')), " +
                     "FOREIGN KEY (doctorID) REFERENCES users_table(userID), " +
                     "FOREIGN KEY (patientID) REFERENCES users_table(userID)" +

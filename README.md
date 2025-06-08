@@ -2,65 +2,70 @@
 
 ## Project Description
 
-The Online Medical Appointment Application is a desktop application built using Java and SQLite. It facilitates the process of booking and managing medical appointments between patients and doctors. The application provides different interfaces based on the user type (Patient, Doctor, Admin) and includes features for user authentication, appointment management, and an AI-powered chat assistant.
+The Online Medical Appointment Application is a modern Java Swing desktop application with an SQLite backend. It streamlines booking and managing medical appointments between patients and doctors, and provides role-based dashboards for Patients, Doctors, and Admins. The application features user authentication, appointment management, real-time chat, and an AI-powered assistant (Gemini).
 
 ## Features
 
-*   **User Authentication:** Secure signup and login for different user types (Patient, Doctor, Admin).
-*   **Role-Based Dashboards:** Customized views and functionalities for Patients, Doctors, and Admins.
-    *   **Patient Dashboard:** View doctor lists, book appointments, access chat-room, manage profile.
-    *   **Doctor Dashboard:** View scheduled appointments, manage availability/schedule, manage profile.
-    *   **Admin Dashboard:** View application statistics (appointments, user count), manage user lists.
-*   **Appointment Booking:** Patients can search for doctors by name or specialty and book appointments based on doctor availability. Includes calendar view and availability checks.
-*   **Scheduling:** Doctors can define and manage their available time slots.
-*   **Chat-Room:** An integrated chat feature where users can interact with an AI bot (planned integration with Google Gemini) for health-related queries and schedule information.
-*   **User Profile Management:** Users can view and edit their profile information (name, phone number) and change their password.
-*   **Logout Functionality:** Securely log out of the application.
-*   **SQLite Database:** Simple, file-based database for storing user information, messages, and schedules.
+- **User Authentication:** Secure signup and login for Patients, Doctors, and Admins.
+- **Role-Based Dashboards:**
+  - **Patient Dashboard:** View doctors, book appointments, chat with doctors, access AI assistant, manage profile.
+  - **Doctor Dashboard:** View schedule, manage appointments, chat with patients, access AI assistant, manage profile.
+  - **Admin Dashboard:** View application statistics, manage users, monitor system activity.
+- **Appointment Booking:** Patients can search for doctors by name or specialty and book appointments based on real-time availability. Includes calendar view and availability checks.
+- **Doctor Scheduling:** Doctors can set and manage their available time slots and view upcoming appointments.
+- **Chat-Room:** Real-time chat between patients and doctors, with searchable user list and dynamic chat room creation.
+- **AI Assistant:** Integrated Gemini AI assistant for medical queries and support.
+- **User Profile Management:** Edit personal information and change password.
+- **Accessibility:** Modern, accessible UI with scrollable panels and improved contrast.
+- **Admin Tools:** User management, system activity monitoring, and graphical statistics.
 
-## Benefits
+## Technology Stack
+- **Java 17+** (Swing for UI)
+- **SQLite** (JDBC for database access)
+- **Maven** (dependency management)
+- **JUnit 5** (unit testing)
+- **Google Gemini SDK** (AI assistant integration)
 
-*   **Convenience:** Provides an easy-to-use platform for patients to find and book appointments and for doctors to manage their schedules.
-*   **Organization:** Centralizes appointment and user data, improving management efficiency.
-*   **Accessibility:** Desktop application provides a dedicated interface for users.
-*   **AI Assistance:** The planned AI chat feature can offer quick answers to health questions and provide information based on available data.
+## Project Structure
 
-## Technologies Used
+```
+OnlineMedicalAppointment/
+├── src/
+│   ├── main/
+│   │   └── java/
+│   │       └── com/
+│   │           └── example/
+│   │               └── OnlineMedicalAppointment/
+│   │                   ├── model/
+│   │                   ├── ui/
+│   │                   └── database/
+│   └── test/
+│       └── ... (tests)
+├── pom.xml
+├── online_medical_appointment.db
+├── README.md
+├── DOCUMENTATION.md
+├── Project detail.md
+└── ...
+```
 
-*   **Java:** The core programming language for the application logic and UI.
-*   **Swing / JavaFX (UI Library):** Used for building the graphical user interface. (Note: The current implementation uses Swing placeholders).
-*   **SQLite:** A lightweight, file-based database used for data storage.
-*   **SQLite JDBC Driver:** Java Database Connectivity driver for interacting with the SQLite database.
-*   **Maven:** Build automation tool for dependency management and project build lifecycle.
-*   **Google Gemini API (Planned):** For the AI chatbot functionality.
+## How to Run
 
-## Getting Started
+1. Ensure you have Java 17+ and Maven installed.
+2. Clone the repository and navigate to the project root.
+3. Run `mvn clean install` to build the project.
+4. Run the application using your IDE or with `mvn exec:java -Dexec.mainClass="com.example.OnlineMedicalAppointment.Main"`.
 
-1.  **Clone the repository:** (Assuming you are using Git)
-    ```bash
-    git clone <repository_url>
-    cd OnlineMedicalAppointment
-    ```
-2.  **Build the project:** Use Maven to build the project and download dependencies.
-    ```bash
-    mvn clean install
-    ```
-3.  **Run the application:**
-    ```bash
-    mvn exec:java
-    ```
-    Alternatively, you can run the `Main` class directly from your IDE after building.
+## Testing
+- Unit tests are located in `src/test/java/com/example/OnlineMedicalAppointment/model/` and `ui/`.
+- Run tests with `mvn test`.
 
-## Database
+## Documentation
+- See `DOCUMENTATION.md` and `Project detail.md` for detailed class and architecture documentation, including a UML diagram.
 
-The application uses an SQLite database named `medical_appointment.db`. The database schema includes tables for `users_table`, `Messages`, and `Schedules`. The `DatabaseInitializer` class ensures these tables are created when the application starts if they don't already exist.
-
-## Future Enhancements
-
-*   Full implementation of Patient Booking, Doctor Scheduling, Chat-Room, and Admin Dashboard features.
-*   Integration with Google Gemini API.
-*   Improved UI design and user experience.
-*   Enhanced security (e.g., password hashing).
-*   More robust error handling and input validation.
-*   Advanced search and filtering options.
-*   Appointment reminders and notifications.
+## Status
+- All major features implemented and tested.
+- UI and accessibility improvements complete.
+- Gemini AI assistant integrated.
+- Real-time chat and dynamic chat room creation enabled.
+- Project is ready for further enhancements and deployment.
