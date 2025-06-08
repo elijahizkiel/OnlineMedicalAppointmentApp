@@ -1,6 +1,7 @@
 package com.example.OnlineMedicalAppointment.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -74,31 +75,44 @@ public class ChatPanel extends JPanel {
             noChatRoomsLabel.setHorizontalAlignment(SwingConstants.CENTER);
             chatListPanel.add(noChatRoomsLabel, BorderLayout.CENTER);
         }else {
-            for ( int i = 0;i < chatRoomIDs.size(); i++) {
-            String chatRoomID = chatRoomIDs.get(i);
-            // For each chat room ID, create a ChatRoom object
-            System.out.println("ChatRoom from ChatPanel: " + chatRoomID);
-            if (chatRoomID == null || chatRoomID.isEmpty()) {
-                continue; // Skip if chat room ID is null or empty
-            }
-            final ChatRoom chatRoom = new ChatRoom(chatRoomID, currentUser);
-            // Create a label for each chat room
-            JLabel roomLabel = StyleConstants.createLabel(chatRoom.getChatRoomName(), StyleConstants.NORMAL_FONT);
-            roomLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-            
-            // Add mouse listener to handle chat room selection
-            roomLabel.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if (e.getClickCount() == 1) {
-                        selectedChatRoom = chatRoom;
-                        updateMessagesPanel(selectedChatRoom);
-                    }
+            for (int i = 0; i < chatRoomIDs.size(); i++) {
+                String chatRoomID = chatRoomIDs.get(i);
+                // For each chat room ID, create a ChatRoom object
+                System.out.println("ChatRoom from ChatPanel: " + chatRoomID);
+                if (chatRoomID == null || chatRoomID.isEmpty()) {
+                    continue; // Skip if chat room ID is null or empty
                 }
-            });
-            scrollableChatRooms.add(roomLabel);
+                final ChatRoom chatRoom = new ChatRoom(chatRoomID, currentUser);
+                JLabel roomLabel = StyleConstants.createLabel(chatRoom.getChatRoomName(), StyleConstants.NORMAL_FONT);
+                roomLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+                roomLabel.setOpaque(true);
+                roomLabel.setBackground(StyleConstants.LIGHT_BG);
+                roomLabel.setForeground(StyleConstants.TEXT_COLOR);
+                // Store reference for selection coloring
+                roomLabel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if (e.getClickCount() == 1) {
+                            selectedChatRoom = chatRoom;
+                            updateMessagesPanel(selectedChatRoom);
+                            // Update label colors
+                            for (java.awt.Component comp : scrollableChatRooms.getComponents()) {
+                                if (comp instanceof JLabel label) {
+                                    if (label == roomLabel) {
+                                        label.setBackground(new java.awt.Color(0, 120, 215)); // Blue
+                                        label.setForeground(Color.WHITE);
+                                    } else {
+                                        label.setBackground(StyleConstants.LIGHT_BG);
+                                        label.setForeground(StyleConstants.TEXT_COLOR);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                scrollableChatRooms.add(roomLabel);
+            }
         }
-    }
         
         JScrollPane chatRoomsScrollPane = new JScrollPane(scrollableChatRooms);
         chatRoomsScrollPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
@@ -197,12 +211,27 @@ public class ChatPanel extends JPanel {
                         if (!alreadyExists) {
                             JLabel roomLabel = StyleConstants.createLabel(newChatRoom.getChatRoomName(), StyleConstants.NORMAL_FONT);
                             roomLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+                            roomLabel.setOpaque(true);
+                            roomLabel.setBackground(StyleConstants.LIGHT_BG);
+                            roomLabel.setForeground(StyleConstants.TEXT_COLOR);
                             roomLabel.addMouseListener(new MouseAdapter() {
                                 @Override
                                 public void mouseClicked(MouseEvent e) {
                                     if (e.getClickCount() == 1) {
                                         selectedChatRoom = newChatRoom;
                                         updateMessagesPanel(selectedChatRoom);
+                                        // Update label colors
+                                        for (java.awt.Component comp : scrollableChatRooms.getComponents()) {
+                                            if (comp instanceof JLabel label) {
+                                                if (label == roomLabel) {
+                                                    label.setBackground(new java.awt.Color(0, 120, 215)); // Blue
+                                                    label.setForeground(Color.WHITE);
+                                                } else {
+                                                    label.setBackground(StyleConstants.LIGHT_BG);
+                                                    label.setForeground(StyleConstants.TEXT_COLOR);
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             });

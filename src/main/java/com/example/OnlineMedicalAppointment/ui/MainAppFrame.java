@@ -146,36 +146,41 @@ public class MainAppFrame extends JFrame {
         geminiButton.setForeground(Color.BLUE);
         geminiButton.setFont(StyleConstants.NORMAL_FONT);
         geminiButton.setFocusPainted(false);
-        geminiButton.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        
-        // Position at bottom right, but further inside
-        int buttonSize = 40;
+        geminiButton.setBorder(BorderFactory.createEmptyBorder(5, 20, 5, 20)); // Wider padding for full text
+
+        // Set preferred size to fit all letters and minimum height
+        int buttonWidth = 120; // Wide enough for "Gemini"
+        int buttonHeight = 32; // Minimum height
+        geminiButton.setPreferredSize(new java.awt.Dimension(buttonWidth, buttonHeight));
+        geminiButton.setMinimumSize(new java.awt.Dimension(80, buttonHeight));
+        geminiButton.setMaximumSize(new java.awt.Dimension(200, 40));
+
         int margin = 40;
         geminiButton.setBounds(
-            getWidth() - buttonSize - margin,
-            getHeight() - buttonSize - margin,
-            buttonSize,
-            buttonSize
+            getWidth() - buttonWidth - margin,
+            getHeight() - buttonHeight - margin,
+            buttonWidth,
+            buttonHeight
         );
-        
+
         geminiButton.addActionListener(e -> {
             // Open Gemini chat dialog
             openGeminiChat();
         });
-        
+
         // Add to layered pane so it floats above content
         JLayeredPane layeredPane = getLayeredPane();
         layeredPane.add(geminiButton, JLayeredPane.POPUP_LAYER);
-        
+
         // Update position on resize
         addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 geminiButton.setBounds(
-                    getWidth() - buttonSize - margin,
-                    getHeight() - buttonSize - margin,
-                    buttonSize,
-                    buttonSize
+                    getWidth() - buttonWidth - margin,
+                    getHeight() - buttonHeight - margin,
+                    buttonWidth,
+                    buttonHeight
                 );
             }
         });
